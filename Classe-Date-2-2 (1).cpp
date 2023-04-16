@@ -1,52 +1,63 @@
 #include <iostream>
 #include <cstdlib>
+#include <fstream>
+#include <vector>
 
 using namespace std;
 
-class date {
+class Date {
     private :
         int jour ;
         int mois ;
         int annee ;
     public :
-        date(int jj,int mm,int aa);
+        Date(int jj,int mm,int aa);
         int getJour() const;
         int getMois() const;
         int getAnnee() const;
         void incrementerDate();
-        friend ostream& operator<< (ostream& flux , date d);
+        friend ostream& operator<< (ostream& flux , Date d);
+        friend istream& operator>> (istream& flux, Date& d);
         bool VerifDate31(int j,int m) const;
         bool VerifDate30(int j,int m) const;
         bool Isleap(int a) const;
-        bool operator==(const date& d) const;
-        bool operator<(const date& d) const;
-        bool operator>(const date& d) const ;
+        bool operator==(const Date& d) const;
+        bool operator<(const Date& d) const;
+        bool operator>(const Date& d) const ;
+        bool VerifDate() const;
 };
-
-ostream& operator<< (ostream& flux , date d ){
+istream& operator>> (istream& flux,Date& d){
+    char separator;
+    do {
+        cout << "Merci de saisir un date valid (jj/mm/aa)"<<endl;
+        flux >> d.jour >> separator >> d.mois >> separator >> d.annee;
+        system("CLS");
+    } while(!(d.VerifDate()));
+    return flux;
+}
+ostream& operator<< (ostream& flux , Date d ){
         flux<<"jour : "<< d.jour << "\nmois : " << d.mois << "\nannee : " << d.annee << endl;
         return flux;
     }
-
-date::date (int jj,int mm,int aa){
+Date::Date (int jj,int mm,int aa){
     jour=jj;
     mois=mm;
     annee=aa;
 }
 
-int date::getJour() const {
+int Date::getJour() const {
     return jour;
 }
 
-int date::getMois() const {
+int Date::getMois() const {
     return mois;
 }
 
-int date::getAnnee() const {
+int Date::getAnnee() const {
     return annee;
 }
 
-void date::incrementerDate(){
+void Date::incrementerDate(){
     if ((mois==2 && ((Isleap(annee) && jour ==29) || (!Isleap(annee) && jour==28))) || (VerifDate30(jour,mois) && jour==30) || (VerifDate31(jour,mois) && jour==31)){
             jour=1;
             if (mois==12) {annee++;mois=1;}
@@ -57,129 +68,154 @@ void date::incrementerDate(){
 
 }
 
-
-/*
-void date::incrementJour(){
-    if ((VerifDateFB(jour,mois) && ((Isleap(jour,mois) && jour ==29) || (!Isleap(jour,mois) && jour==28))) || (VerifDate30(jour,mois) && jour==30) || (VerifDate31(jour,mois) && jour==31)) jour=1;
-    else jour++ ;
-}
-
-void date::incrementMois(){
-    if (mois==12) mois=1;
-    mois++;
-}
-
-void date::incrementAnnee() {
-    annee++;
-}
-*/
-bool date::Isleap(int a) const{
+bool Date::Isleap(int a) const{
     if (a%4==0 || (a%100==0 && a%400==0)) {
         return true;
     }
     return false;
 }
 
-bool date::VerifDate31(int j, int m) const{
+bool Date::VerifDate31(int j, int m) const{
     if ((m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) && j >= 1 && j <= 31) {
         return true;
     }
     return false;
 }
 
-bool date::VerifDate30(int j, int m) const{
+bool Date::VerifDate30(int j, int m) const{
     if ((m == 4 || m == 6 || m == 9 || m == 11) && j >= 1 && j <= 30) {
         return true;
     }
     return false;
 }
-
-
-bool date::operator==(const date& d) const {
+bool Date::VerifDate() const{
+            if(jour>0 && jour<=31 && mois>0 && mois <13 && annee>0 )
+                {return true;}
+            return false;
+        }
+bool Date::operator==(const Date& d) const {
     return (jour == d.jour && mois == d.mois && annee == d.annee);
 }
 
-bool date::operator<(const date& d) const {
-if (annee < d.annee) {
-return true;
-}
-else if (annee > d.annee) {
-return false;
-}
-else {
-if (mois < d.mois) {
-return true;
-}
-else if (mois > d.mois) {
-return false;
-}
-else {
-if (jour < d.jour) {
-return true;
-}
-else {
-return false;
-}
-}
-}
-}
-
-bool date::operator>(const date& d) const {
-if (annee > d.annee) {
-return true;
-}
-else if (annee < d.annee) {
-return false;
-}
-else {
-if (mois > d.mois) {
-return true;
-}
-else if (mois < d.mois) {
-return false;
-}
-else {
-if (jour > d.jour) {
-return true;
-}
-else {
-return false;
-}
-}
-}
+bool Date::operator<(const Date& d) const {
+    if (annee < d.annee) {
+        return true;
+    }
+    else if (annee > d.annee) {
+        return false;
+    }
+    else {
+        if (mois < d.mois) {
+            return true;
+        }
+        else if (mois > d.mois) {
+            return false;
+        }
+        else {
+            if (jour < d.jour) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
 }
 
-// main function to test the date class
-int main() {
-date d1(4, 9, 2023);
-date d2(31, 12, 2022);
-date d3(28, 2, 2021);
-date d4(29, 2, 2020);
-cout << "Date 1: " << d1 << endl;
-cout << "Date 2: " << d2 << endl;
-cout << "Date 3: " << d3 << endl;
-cout << "Date 4: " << d4 << endl;
-
-cout << "Date 1 is equal to Date 2: " << (d1 == d2) << endl;
-cout << "Date 1 is equal to Date 3: " << (d1 == d3) << endl;
-cout << "Date 1 is less than Date 2: " << (d1 < d2) << endl;
-cout << "Date 1 is less than Date 3: " << (d1 < d3) << endl;
-cout << "Date 1 is greater than Date 2: " << (d1 > d2) << endl;
-cout << "Date 1 is greater than Date 3: " << (d1 > d3) << endl;
-
-d1.incrementerDate();
-cout << "Date 1 after incrementing : " << d1 << endl;
-
-d2.incrementerDate();
-cout << "Date 2 after incrementing: " << d2 << endl;
-
-d3.incrementerDate();
-cout << "Date 3 after incrementing: " << d3 << endl;
-
-d4.incrementerDate();
-cout << "Date 4 after incrementing: " << d4 << endl;
-
-return 0;
+bool Date::operator>(const Date& d) const {
+    if (annee > d.annee) {
+        return true;
+    }
+    else if (annee < d.annee) {
+        return false;
+    }
+    else {
+        if (mois > d.mois) {
+            return true;
+        }
+        else if (mois < d.mois) {
+            return false;
+        }
+        else {
+            if (jour > d.jour) {
+            return true;
+            }
+            else {
+            return false;
+            }
+        }
+    }
 }
 
 
+class PrixJournalier{
+    private:
+        Date date;
+        double prix;
+        string nomAction;
+    public:
+        PrixJournalier(Date d,float p,string n) : date(d),prix(p),nomAction(n){};
+        PrixJournalier() : date(Date(0,0,0)), prix(0.0), nomAction("") {}
+        friend ostream& operator<< (ostream& flux , PrixJournalier pj);
+        friend istream& operator>> (istream& flux, PrixJournalier& pj);
+        string getNomAction() const { return nomAction; };
+        Date getDate() const { return date; };
+        double getPrix() const { return prix; };
+
+};
+
+ostream& operator<< (ostream& flux , PrixJournalier pj){
+    flux<<"date : "<< pj.date << "\nprix : " << pj.prix << "\nnom de l'action : " << pj.nomAction << endl;
+    return flux;
+}
+
+istream& operator>> (istream& flux, PrixJournalier& pj){
+    string sJour,sMois,sAnnee,sPrix,nom;
+    getline(flux,sJour,'/');
+    getline(flux,sMois,'/');
+    getline(flux,sAnnee,';');
+    Date d(stoi(sJour),stoi(sMois),stoi(sAnnee));
+    getline(flux,nom,';');
+    getline(flux,sPrix);
+    pj.date=d;
+    pj.prix=stod(sPrix);
+    pj.nomAction=nom;
+    return flux;
+}
+
+class PersistancePrixJournaliers
+{
+    public:
+       static vector<PrixJournalier> lirePrixJournaliersDUnFichier(string chemin){
+            vector<PrixJournalier> historique;
+            ifstream f(chemin);
+            int nbLignes= 0;
+            string entete,sJour,sMois,sAnnee,sPrix,nom;
+            if(f.is_open()){
+                f>>entete;
+                while(!f.eof()){
+                    PrixJournalier pj;
+                    f>>pj;
+                    historique.push_back(pj);
+                    nbLignes++;
+                }
+            }
+            return historique;
+        }
+};
+
+
+int main(){
+    ifstream f("price.csv");
+    int nbLignes= 0;
+    string entete;
+    Date d2(0,0,0);
+    cin >> d2;
+    cout << d2;
+    Date d(14,12,2001);
+    PrixJournalier pj(d,15,"google");
+    f>>entete;
+    f>>pj;
+    cout<<pj;
+    return 0;
+}

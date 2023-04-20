@@ -4,8 +4,11 @@
 #include <vector>
 #include <string>
 
+
 using namespace std;
 
+#define printf(x) cout << x << endl;
+#define nbMax 20
 class Date {
     private :
         int jour ;
@@ -13,9 +16,9 @@ class Date {
         int annee ;
     public :
         Date(int jj,int mm,int aa);
-        int getJour() const;
-        int getMois() const;
-        int getAnnee() const;
+        int getJour() const {return jour;};
+        int getMois() const {return mois;};
+        int getAnnee() const {return annee;};
         void incrementerDate();
         friend ostream& operator<< (ostream& flux , Date d);
         friend istream& operator>> (istream& flux, Date& d);
@@ -25,7 +28,7 @@ class Date {
         bool operator==(const Date& d) const;
         bool operator<(const Date& d) const;
         bool operator>(const Date& d) const ;
-         bool operator<=(const Date& d) const;
+        bool operator<=(const Date& d) const;
         bool VerifDate() const;
 };
 istream& operator>> (istream& flux,Date& d){
@@ -50,21 +53,6 @@ Date::Date (int jj,int mm,int aa){
     mois=mm;
     annee=aa;
 }
-
-int Date::getJour() const {
-    return jour;
-}
-
-int Date::getMois() const {
-    return mois;
-}
-
-int Date::getAnnee() const {
-    return annee;
-}
-
-
-
 void Date::incrementerDate(){
     if ((mois==2 && ((Isleap(annee) && jour ==29) || (!Isleap(annee) && jour==28))) || (VerifDate30(jour,mois) && jour==30) || (VerifDate31(jour,mois) && jour==31)){
             jour=1;
@@ -72,24 +60,19 @@ void Date::incrementerDate(){
             else mois++;
     }
     else jour++;
-
-
 }
-
 bool Date::Isleap(int a) const{
     if (a%4==0 || (a%100==0 && a%400==0)) {
         return true;
     }
     return false;
 }
-
 bool Date::VerifDate31(int j, int m) const{
     if ((m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) && j >= 1 && j <= 31) {
         return true;
     }
     return false;
 }
-
 bool Date::VerifDate30(int j, int m) const{
     if ((m == 4 || m == 6 || m == 9 || m == 11) && j >= 1 && j <= 30) {
         return true;
@@ -104,7 +87,6 @@ bool Date::VerifDate() const{
 bool Date::operator==(const Date& d) const {
     return (jour == d.jour && mois == d.mois && annee == d.annee);
 }
-
 bool Date::operator<(const Date& d) const {
     if (annee < d.annee) {
         return true;
@@ -154,8 +136,7 @@ bool Date::operator>(const Date& d) const {
         }
     }
 }
-
-
+//////////// NEW CLASS ///////////
 class PrixJournalier{
     private:
         Date date;
@@ -169,17 +150,11 @@ class PrixJournalier{
         string getNomAction() const { return nomAction; };
         Date getDate() const { return date; };
         double getPrix() const { return prix; };
-
-
 };
-
-
 ostream& operator<< (ostream& flux , PrixJournalier pj){
   //flux<<"date : "<< pj.date << "\nprix : " << pj.prix << "\nnom de l'action : " << pj.nomAction << endl;
-    flux << pj.date << ";" << pj.nomAction << ";" << pj.prix << endl;
-    return flux;
-}
-
+    flux << pj.date <<";"<< pj.nomAction <<";"<< pj.prix << endl;
+    return flux;}
 istream& operator>> (istream& flux, PrixJournalier& pj){
     string sPrix,nom;
     Date d(0,0,0);
@@ -190,10 +165,7 @@ istream& operator>> (istream& flux, PrixJournalier& pj){
     pj.date=d;
     pj.prix=stod(sPrix);
     pj.nomAction=nom;
-    return flux;
-}
-
-
+    return flux;}
 bool Date::operator<=(const Date& d) const {
     if (annee <= d.annee) {
         return true;
@@ -217,8 +189,7 @@ bool Date::operator<=(const Date& d) const {
             }
         }
     }
-}
-
+}//////NEW CLASS////////
 class PersistancePrixJournaliers
 {
     public:
@@ -234,27 +205,21 @@ class PersistancePrixJournaliers
                     f>>pj;
                     historique.push_back(pj);
                     nbLignes++;
-                    if (nbLignes==9) break;
+                    if (nbLignes==nbMax) break;
                 }
             }
             return historique;
         }
 };
-
-
 class Bourse {
     protected:
         Date dateFinRecherche;
     public:
         Bourse(Date dFR) : dateFinRecherche(dFR) {};
-        Date getDateFinRecherche() const ;
+        Date getDateFinRecherche() const {return dateFinRecherche;} ;
         virtual vector<string> getActionsDisponiblesParDate(Date date) const = 0;
         virtual vector<PrixJournalier> getPrixJournaliersParDate(Date date) const = 0;
 };
-
-Date Bourse::getDateFinRecherche() const{
-    return dateFinRecherche;
-}
 
 class BourseVector : public Bourse {
     private:
@@ -263,14 +228,8 @@ class BourseVector : public Bourse {
         BourseVector(Date dFR,vector<PrixJournalier> vect) : Bourse(dFR),historique(vect) {};
         vector<string> getActionsDisponiblesParDate(Date date) const;
         vector<PrixJournalier> getPrixJournaliersParDate(Date date) const;
-        vector<PrixJournalier> getHistorique() const;
+        vector<PrixJournalier> getHistorique() const {return historique;};
 };
-
-vector<PrixJournalier> BourseVector::getHistorique() const {
-    return historique;
-    }
-
-
 vector<string> BourseVector::getActionsDisponiblesParDate(Date date) const{
     vector<string> actionsDisponibles;
     for (const PrixJournalier& prix : historique) {
@@ -280,7 +239,6 @@ vector<string> BourseVector::getActionsDisponiblesParDate(Date date) const{
     }
     return actionsDisponibles;
 }
-
 vector<PrixJournalier> BourseVector::getPrixJournaliersParDate(Date date) const{
     vector<PrixJournalier> prixJournaliers;
     for (const PrixJournalier& prix : historique){
@@ -290,7 +248,6 @@ vector<PrixJournalier> BourseVector::getPrixJournaliersParDate(Date date) const{
     }
     return prixJournaliers;
 }
-
 int main(){
 
     Date d1(4, 9, 2023);
@@ -298,7 +255,7 @@ int main(){
     Date d3(28, 2, 2021);
     Date d4(29, 2, 2020);
     Date d5(0,0,0);
-    cout << "donner la Date (format: jour/mois/annee) -> " ;
+    printf("donner la Date (format: jour/mois/annee) -> ") ;
     cin >> d5;
     cout << "Date 1: " << d1 <<"\nDate 2: "<<d2<<"\nDate 3: "<< d3 <<"\nDate 4: "<< d4 <<"\nDate 5: "<<d5<< endl;
     cout << "**************************************************\n";
@@ -358,3 +315,4 @@ int main(){
     }
 return 0;
 }
+

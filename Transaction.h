@@ -3,13 +3,18 @@
 
 using namespace std;
 
-enum typeTransaction {vente,achat};
+enum typeTransaction {vente,achat,rien};
 
 class Transaction {
     private :
         string nomAction;
-        int quantité;
+        int quantite;
         typeTransaction type;
+    public :
+        Transaction(string nom="",int qte=0,typeTransaction type=rien) : nomAction(nom),quantite(qte),type(type){};
+        string getNomAction()const{return nomAction;};
+        int getQuantite()const{return quantite;};
+        typeTransaction getType()const{return type;};
 };
 
 

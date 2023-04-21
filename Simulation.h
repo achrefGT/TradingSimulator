@@ -1,5 +1,6 @@
 #ifndef SIMULATION_H_INCLUDED
 #define SIMULATION_H_INCLUDED
+#include "Trader.h"
 
 using namespace std;
 

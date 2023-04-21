@@ -7,6 +7,11 @@
 #include "Date.h"
 #include "PrixJournalier.h"
 #include "PersistancePrixJournalier.h"
+#include "Portfeuille.h"
+#include "Simulation.h"
+#include "Titre.h"
+#include "Transaction.h"
+#include "Trader.h"
 
 using namespace std;
 

@@ -4,17 +4,17 @@
 
 using namespace std;
 
-class Portfeuille {
+class Portefeuille {
     private :
         double solde;
         vector<Titre> titres;
     public :
-        Portfeuille(double solde = 0.0):solde(solde) {};
+        Portefeuille(double solde = 0.0):solde(solde) {};
 		double getSolde() const;
 		vector<Titre> getTitres() const;
 //		bool chercherTitre (const Titre titre) const;
-		bool ajouterTitre(const Titre titre);
-		bool retirerTitre(const Titre titre);
+		bool ajouterTitre(const Titre& titre);
+		bool retirerTitre(const Titre& titre);
         bool deposerMontant (double );
         bool retirerMontant (double );
 };
@@ -27,7 +27,7 @@ bool chercherTitre (const Titre titre) const{
     return test;
 };*/
 
-bool Portfeuille::ajouterTitre (const Titre titre){
+bool Portefeuille::ajouterTitre (const Titre& titre){
     for (int i=0; i<titres.size(); i++){
 		if (titres[i].getNomAction() == titre.getNomAction()){
             titres.push_back(Titre(titre.getNomAction(),titre.getQuantite()+titres[i].getQuantite()));
@@ -39,23 +39,27 @@ bool Portfeuille::ajouterTitre (const Titre titre){
     return true;
 }
 
-bool Portfeuille::retirerTitre (const Titre titre){
+bool Portefeuille::retirerTitre(const Titre& titre) {
     double difference;
-    for (int i=0; i<titres.size(); i++){
-		if (titres[i].getNomAction() == titre.getNomAction() && titres[i].getQuantite() >= titre.getQuantite()){
-            difference=titres[i].getQuantite()-titre.getQuantite();
-            if (difference>0) titres.push_back(Titre(titre.getNomAction(),difference));
-			titres.erase(titres.begin() + i);
-			return true;
-		}
+    for (int i = 0; i < titres.size(); i++) {
+        if (titres[i].getNomAction() == titre.getNomAction() && titres[i].getQuantite() >= titre.getQuantite()) {
+            difference = titres[i].getQuantite() - titre.getQuantite();
+            if (difference > 0) {
+                titres.push_back(Titre(titre.getNomAction(), difference));
+            }
+            titres.erase(titres.begin() + i);
+            return true;
+        }
     }
-    return true;
+    return false;
 }
-bool Portfeuille::deposerMontant (double montant){
+
+
+bool Portefeuille::deposerMontant (double montant){
     solde+=montant;
     return true;
 }
-bool Portfeuille::retirerMontant (double montant){
+bool Portefeuille::retirerMontant (double montant){
     if (solde >= montant){
 		solde -= montant;
 		return true;
@@ -66,4 +70,7 @@ bool Portfeuille::retirerMontant (double montant){
 
 
 
-#endif // PORTFEUILLE_H_INCLUDED
+
+
+
+#endif // PORTEFEUILLE_H_INCLUDED

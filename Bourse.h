@@ -28,8 +28,8 @@ class BourseVector : public Bourse {
         vector<PrixJournalier> historique;
     public:
         BourseVector(Date dFR,vector<PrixJournalier> vect) : Bourse(dFR),historique(vect) {};
-        virtual vector<string> getActionsDisponiblesParDate(Date date) const;
-        virtual vector<PrixJournalier> getPrixJournaliersParDate(Date date) const;
+        vector<string> getActionsDisponiblesParDate(Date date) const;
+        vector<PrixJournalier> getPrixJournaliersParDate(Date date) const;
         vector<PrixJournalier> getHistorique() const;
 };
 

@@ -1,6 +1,6 @@
 #ifndef PORTEFEUILLE_H_INCLUDED
 #define PORTEFEUILLE_H_INCLUDED
-#include"Titre.h"
+#include "Titre.h"
 
 using namespace std;
 
@@ -9,7 +9,7 @@ class Portefeuille {
         double solde;
         vector<Titre> titres;
     public :
-        Portefeuille(double solde = 0.0):solde(solde) {};
+        Portefeuille(double solde = 0.0):solde(solde), titres() {};
 		double getSolde() const;
 		vector<Titre> getTitres() const;
 //		bool chercherTitre (const Titre titre) const;

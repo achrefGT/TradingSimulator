@@ -1,32 +1,69 @@
 #ifndef PORTEFEUILLE_H_INCLUDED
 #define PORTEFEUILLE_H_INCLUDED
+#include"Titre.h"
 
 using namespace std;
 
-class Portefeuille {
+class Portfeuille {
     private :
         double solde;
-        vector<Titre> Titres;
+        vector<Titre> titres;
     public :
-        void ajouterTitre (Titre );
-        void retirerTitre (Titre );
-        void deposerMontant (double );
-        void retirarMontant (double );
+        Portfeuille(double solde = 0.0):solde(solde) {};
+		double getSolde() const;
+		vector<Titre> getTitres() const;
+//		bool chercherTitre (const Titre titre) const;
+		bool ajouterTitre(const Titre titre);
+		bool retirerTitre(const Titre titre);
+        bool deposerMontant (double );
+        bool retirerMontant (double );
 };
+/*
+bool chercherTitre (const Titre titre) const{
+    bool test = true;
+    for(Titre t : Titres){
+        if (t.getNomAction()==titre.getNomAction()) test=false;
+    }
+    return test;
+};*/
 
-void Portefeuille::ajouterTitre (Titre titre){
-    Titres.push_back(titre);
+bool Portfeuille::ajouterTitre (const Titre titre){
+    for (int i=0; i<titres.size(); i++){
+		if (titres[i].getNomAction() == titre.getNomAction()){
+            titres.push_back(Titre(titre.getNomAction(),titre.getQuantite()+titres[i].getQuantite()));
+			titres.erase(titres.begin() + i);
+			return true;
+		}
+    }
+	titres.push_back(titre);
+    return true;
 }
 
-void Portefeuille::retirerTitre (Titre titre){
-    Titres.pop_back()
+bool Portfeuille::retirerTitre (const Titre titre){
+    double difference;
+    for (int i=0; i<titres.size(); i++){
+		if (titres[i].getNomAction() == titre.getNomAction() && titres[i].getQuantite() >= titre.getQuantite()){
+            difference=titres[i].getQuantite()-titre.getQuantite();
+            if (difference>0) titres.push_back(Titre(titre.getNomAction(),difference));
+			titres.erase(titres.begin() + i);
+			return true;
+		}
+    }
+    return true;
 }
-void Portefeuille::deposerMontant (double montant){
+bool Portfeuille::deposerMontant (double montant){
     solde+=montant;
+    return true;
 }
-void Portefeuille::retirarMontant (double montant){
-    solde-=montant;
+bool Portfeuille::retirerMontant (double montant){
+    if (solde >= montant){
+		solde -= montant;
+		return true;
+	}
+	return false;
 }
 
 
-#endif // PORTEFEUILLE_H_INCLUDED
+
+
+#endif // PORTFEUILLE_H_INCLUDED

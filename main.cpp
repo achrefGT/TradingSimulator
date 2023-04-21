@@ -7,7 +7,7 @@
 #include "Date.h"
 #include "PrixJournalier.h"
 #include "PersistancePrixJournalier.h"
-#include "Portfeuille.h"
+#include "Portefeuille.h"
 #include "Simulation.h"
 #include "Titre.h"
 #include "Transaction.h"

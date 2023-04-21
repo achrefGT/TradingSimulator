@@ -1,5 +1,7 @@
 #ifndef TRADER_H_INCLUDED
 #define TRADER_H_INCLUDED
+#include "Transaction.h"
+#include "Portefeuille.h"
 
 using namespace std;
 

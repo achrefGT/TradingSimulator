@@ -2,6 +2,7 @@
 #define TRADER_H_INCLUDED
 #include "Transaction.h"
 #include "Portefeuille.h"
+#include "Date.h"
 
 using namespace std;
 
@@ -18,6 +19,8 @@ class TraderAleatoire : public Trader {
 } ;
 
 Transaction TraderAleatoire::choisirTransaction(const Bourse& bourse, const Portefeuille &portefeuille){
+    vector<PrixJournalier> prixJournalierDisponibles = bourse.getPrixJournaliersParDate(bourse.getDateFinRecherche());
+
 
 }
 

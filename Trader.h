@@ -23,7 +23,7 @@ Transaction TraderAleatoire::choisirTransaction(const Bourse& bourse, const Port
     vector<PrixJournalier> actionsDisponibles = bourse.getPrixJournaliersParDate(bourse.getDateFinRecherche(), portefeuille.getSolde()); // avoir une copie des prix journaliers disponibles
     int choix = rand() % 3;
     if (actionsDisponibles.empty()) {
-        choix = rand() % 2;   // si il n'y a pas des action dans la bourse soit on vend des titres ou on fait rien
+        choix = rand() % 2;   // si il n'y a pas des actions dans la bourse soit on vend des titres ou on fait rien
     }
     if (portefeuille.getTitres().empty()) {
         choix = 2;           // si le portefeuille est vide on achete

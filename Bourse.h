@@ -14,8 +14,8 @@ class Bourse {
     public:
         Bourse(Date dFR) : dateFinRecherche(dFR) {};
         Date getDateFinRecherche() const ;
-        virtual vector<string> getActionsDisponiblesParDate(Date date) const = 0;
-        virtual vector<PrixJournalier> getPrixJournaliersParDate(Date date) const = 0;
+        virtual vector<string> getActionsDisponiblesParDate(Date,double prixMax = 0.0) const = 0;
+        virtual vector<PrixJournalier> getPrixJournaliersParDate(Date,double prixMax = 0.0) const = 0;
 };
 
 Date Bourse::getDateFinRecherche() const{
@@ -28,8 +28,8 @@ class BourseVector : public Bourse {
         vector<PrixJournalier> historique;
     public:
         BourseVector(Date dFR,vector<PrixJournalier> vect) : Bourse(dFR),historique(vect) {};
-        vector<string> getActionsDisponiblesParDate(Date date) const;
-        vector<PrixJournalier> getPrixJournaliersParDate(Date date) const;
+        vector<string> getActionsDisponiblesParDate(Date,double) const;
+        vector<PrixJournalier> getPrixJournaliersParDate(Date,double) const;
         vector<PrixJournalier> getHistorique() const;
 };
 
@@ -38,21 +38,25 @@ vector<PrixJournalier> BourseVector::getHistorique() const {
     }
 
 
-vector<string> BourseVector::getActionsDisponiblesParDate(Date date) const{
+vector<string> BourseVector::getActionsDisponiblesParDate(Date date,double prixMax=0.0) const{
     vector<string> actionsDisponibles;
-    for (const PrixJournalier& prix : historique) {
-        if (prix.getDate() <= date) {
-            actionsDisponibles.push_back(prix.getNomAction());
+    for (const PrixJournalier& pj : historique) {
+        if (pj.getDate() <= date) {
+            if ((prixMax && pj.getPrix()<=prixMax) || !prixMax){
+                actionsDisponibles.push_back(pj.getNomAction());
+            }
         }
     }
     return actionsDisponibles;
 }
 
-vector<PrixJournalier> BourseVector::getPrixJournaliersParDate(Date date) const{
+vector<PrixJournalier> BourseVector::getPrixJournaliersParDate(Date date,double prixMax=0.0) const{
     vector<PrixJournalier> prixJournaliers;
-    for (const PrixJournalier& prix : historique){
-        if (prix.getDate() <= date) {
-            prixJournaliers.push_back(prix);
+    for (const PrixJournalier& pj : historique){
+        if (pj.getDate() <= date) {
+            if ((prixMax && pj.getPrix() <=prixMax) || !prixMax){
+                prixJournaliers.push_back(pj);
+            }
         }
     }
     return prixJournaliers;

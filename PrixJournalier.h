@@ -1,5 +1,6 @@
 #ifndef PRIXJOURNALIER_H_INCLUDED
 #define PRIXJOURNALIER_H_INCLUDED
+#include "Date.h"
 
 using namespace std;
 
@@ -19,25 +20,24 @@ class PrixJournalier{
         double getPrix() const { return prix; };
 
 
+
 };
 
 
 ostream& operator<< (ostream& flux , PrixJournalier pj){
-  //flux<<"date : "<< pj.date << "\nprix : " << pj.prix << "\nnom de l'action : " << pj.nomAction << endl;
     flux << pj.date << ";" << pj.nomAction << ";" << pj.prix << endl;
     return flux;
 }
 
 istream& operator>> (istream& flux, PrixJournalier& pj){
-    string sPrix,nom;
-    Date d(0,0,0);
-    flux>>d;
-    getline(flux,nom,';');
-    getline(flux,nom,';');
+    string sDate,sPrix,nom;
+    getline(flux,sDate,';');
+    getline(flux,pj.nomAction,';');
     getline(flux,sPrix);
-    pj.date=d;
+    stringstream ss;
+    ss << sDate;
+    ss >> pj.date;
     pj.prix=stod(sPrix);
-    pj.nomAction=nom;
     return flux;
 }
 

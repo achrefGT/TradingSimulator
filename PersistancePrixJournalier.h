@@ -18,7 +18,7 @@ class PersistancePrixJournaliers
                     f>>pj;
                     historique.push_back(pj);
                     nbLignes++;
-                    if (nbLignes==9) break;
+                    if (nbLignes==300000) break;
                 }
             }
             return historique;

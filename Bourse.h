@@ -10,40 +10,44 @@ using namespace std;
 
 class Bourse {
     protected:
-        Date dateFinRecherche;
+        Date dateAujourdHui;
     public:
-        Bourse(Date dFR) : dateFinRecherche(dFR) {};
-        Date getDateFinRecherche() const ;
+        Bourse(Date dateAujourdHui) : dateAujourdHui(dateAujourdHui) {};
+        void setDateAujourdHui(Date date){if(date.VerifDate()) dateAujourdHui=date;};
+        Date getDateAujourdHui() const {return dateAujourdHui;};
         virtual vector<string> getActionsDisponiblesParDate(Date,double prixMax = 0.0) const = 0;
         virtual vector<PrixJournalier> getPrixJournaliersParDate(Date,double prixMax = 0.0) const = 0;
+        virtual vector<PrixJournalier> getHistorique() const = 0;
 };
-
-Date Bourse::getDateFinRecherche() const{
-    return dateFinRecherche;
-}
 
 
 class BourseVector : public Bourse {
     private:
         vector<PrixJournalier> historique;
     public:
-        BourseVector(Date dFR,vector<PrixJournalier> vect) : Bourse(dFR),historique(vect) {};
+        BourseVector(Date da,vector<PrixJournalier> vect) : Bourse(da),historique(vect) {};
         vector<string> getActionsDisponiblesParDate(Date,double) const;
         vector<PrixJournalier> getPrixJournaliersParDate(Date,double) const;
         vector<PrixJournalier> getHistorique() const;
 };
 
 vector<PrixJournalier> BourseVector::getHistorique() const {
-    return historique;
+    vector<PrixJournalier> hist;
+    for (const PrixJournalier& pj : historique) {
+        if (pj.getDate() <= dateAujourdHui) {
+                hist.push_back(pj);
+        }
+    };
+    return hist;
     }
 
 
 vector<string> BourseVector::getActionsDisponiblesParDate(Date date,double prixMax=0.0) const{
     vector<string> actionsDisponibles;
     for (const PrixJournalier& pj : historique) {
-        if (pj.getDate() <= date) {
+        if (pj.getDate() == date) {
             if ((prixMax && pj.getPrix()<=prixMax) || !prixMax){
-                actionsDisponibles.push_back(pj.getNomAction());
+                actionsDisponibles.push_back(pj.getNomAction());    // pour une date donnée, si il ya un prix max il ne faut pas le dépasser
             }
         }
     }
@@ -53,9 +57,9 @@ vector<string> BourseVector::getActionsDisponiblesParDate(Date date,double prixM
 vector<PrixJournalier> BourseVector::getPrixJournaliersParDate(Date date,double prixMax=0.0) const{
     vector<PrixJournalier> prixJournaliers;
     for (const PrixJournalier& pj : historique){
-        if (pj.getDate() <= date) {
+        if (pj.getDate() == date) {
             if ((prixMax && pj.getPrix() <=prixMax) || !prixMax){
-                prixJournaliers.push_back(pj);
+                prixJournaliers.push_back(pj);            // pour une date donnée, si il ya un prix max il ne faut pas le dépasser
             }
         }
     }
@@ -64,3 +68,4 @@ vector<PrixJournalier> BourseVector::getPrixJournaliersParDate(Date date,double 
 
 
 #endif // BOURSE_H_INCLUDED
+

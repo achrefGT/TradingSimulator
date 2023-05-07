@@ -6,17 +6,17 @@ using namespace std;
 
 class Portefeuille {
     private :
-        long solde;
+        double solde;
         vector<Titre> titres;
     public :
-        Portefeuille(long solde = 0.0):solde(solde), titres() {};
-		long getSolde() const;
+        Portefeuille(double solde = 0.0):solde(solde), titres() {};
+		double getSolde() const;
         vector<Titre> getTitres() const;
 		bool chercherTitre (const string) const;
 		bool ajouterTitre(const Titre& titre);
 		bool retirerTitre(const Titre& titre);
-        bool deposerMontant (long );
-        bool retirerMontant (long );
+        bool deposerMontant (double );
+        bool retirerMontant (double );
         int getQuantiteTitre (const string) const;
 };
 
@@ -42,7 +42,7 @@ bool Portefeuille::ajouterTitre (const Titre& titre){
 }
 
 bool Portefeuille::retirerTitre(const Titre& titre) {
-    long difference;
+    double difference;
     for (vector<Titre>::size_type i = 0; i < titres.size(); i++) {
         if (titres[i] == titre && titres[i].getQuantite() >= titre.getQuantite()) {
             difference = titres[i].getQuantite() - titre.getQuantite();
@@ -57,12 +57,12 @@ bool Portefeuille::retirerTitre(const Titre& titre) {
 }
 
 
-bool Portefeuille::deposerMontant (long montant){
+bool Portefeuille::deposerMontant (double montant){
     if(montant<0) return false;
     solde+=montant;
     return true;
 }
-bool Portefeuille::retirerMontant (long montant){
+bool Portefeuille::retirerMontant (double montant){
     if(montant<0) return false;
     if (solde >= montant){
 		solde -= montant;
@@ -71,7 +71,7 @@ bool Portefeuille::retirerMontant (long montant){
 	return false;
 }
 
-long Portefeuille::getSolde() const{
+double Portefeuille::getSolde() const{
     return solde;
 }
 

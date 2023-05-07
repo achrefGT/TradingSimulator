@@ -54,7 +54,7 @@ Transaction TraderAleatoire::choisirTransaction(const Bourse& bourse, const Port
             int quantiteMax = ceil(portefeuille.getSolde()/actionsDisponibles[i].getPrix());
             do{
                 i = rand() % taille;
-                quantiteMax = ceil(portefeuille.getSolde()/actionsDisponibles[i].getPrix());
+                quantiteMax = floor(portefeuille.getSolde()/actionsDisponibles[i].getPrix());
             }while(quantiteMax<1);
 
             quantite = 1+ rand() % quantiteMax;
@@ -89,21 +89,43 @@ Transaction TraderCheapestAndMostValuable::choisirTransaction(const Bourse& bour
             mostValuableTitre = prix.getNomAction();
         }
     }
-
-    // Sell non-profitable titles
+        double SeuilProfit = 5.15;
+    // Sell profitable titles
     for (const Titre& titre : titresDisponibles) {
         if (titre.getQuantite() > 0) {
-            if (actionsDisponibles.empty() || titre.getNomAction() != mostValuableTitre) {
-                tx = Transaction(titre, vente);
+            bool isProfitable = false;
+
+            for (const PrixJournalier& price : actionsDisponibles) {
+                if (price.getNomAction() == titre.getNomAction()) {
+                    if (price.getPrix() > cheapestPrice) {
+                        isProfitable = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!isProfitable) {
+                tx = Transaction(Titre(titre.getNomAction(),rand()%100), vente);
                 return tx;
             }
         }
     }
 
+
+
+        // Sell highly appreciated titles
+        for (const PrixJournalier& price : actionsDisponibles) {
+            for (const Titre& titre : titresDisponibles) {
+                if (titre.getQuantite() > 0 && price.getNomAction() == titre.getNomAction() && price.getPrix() > SeuilProfit+SeuilProfit) {
+                    tx = Transaction(Titre(price.getNomAction(),1), vente);
+                    return tx;
+                }
+            }
+        }
     // Buy the cheapest title if affordable
     if (cheapestPrice != numeric_limits<double>::max()) {
         double maxAffordableQuantity = portefeuille.getSolde() / cheapestPrice;
-        int quantityToBuy = static_cast<int>(floor(maxAffordableQuantity));
+        int quantityToBuy = static_cast<int>(floor(maxAffordableQuantity))-25;
         if (quantityToBuy > 0) {
             tx = Transaction(Titre(cheapestTitre, quantityToBuy), achat);
             return tx;
@@ -147,15 +169,20 @@ Transaction TraderMoyenne::choisirTransaction(const Bourse& bourse, const Portef
             actions[pj.getNomAction()].push_back(pj.getPrix());
         }
     }
-
-    tuple<typeTransaction, string, double, float> benefitMax = make_tuple(rien, "", 0.0, 0.0);
+    if (titresDisponibles.empty()){
+        tuple<string,double> actionMin = make_tuple("",portefeuille.getSolde());
+        for (PrixJournalier pj : actionsDisponibles){
+            actionMin = (pj.getPrix() < get<1>(actionMin)) ? make_tuple(pj.getNomAction(),pj.getPrix()) : actionMin ;
+        }
+        return Transaction (Titre(get<0>(actionMin),floor(portefeuille.getSolde()/(10*get<1>(actionMin)))),achat);
+    }
+    double pourcent;
+    tuple<typeTransaction, string, double, double> benefitMax = make_tuple(rien, "", 0.0, 0.0);
     for (PrixJournalier pj : actionsDisponibles){
         auto action = actions.find(pj.getNomAction());
         double prixMoyen;
-        float pourcent;
         if ( action != actions.end() ){
             prixMoyen = this->calculerMoyenne(action->second);
-           // cout<<pj.getNomAction()<<" : "<<prixMoyen<<"          "<<pj.getPrix()<<endl;
             if (prixMoyen > pj.getPrix()){
                 pourcent = pourcentage(prixMoyen,pj.getPrix());
                 benefitMax = (pourcent >= 2 && pourcent >= get<3>(benefitMax)) ? make_tuple(achat, pj.getNomAction(), pj.getPrix(), pourcent) : benefitMax;
@@ -167,9 +194,17 @@ Transaction TraderMoyenne::choisirTransaction(const Bourse& bourse, const Portef
 
         }
     }
-    if (get<0>(benefitMax)==achat) return Transaction(Titre(get<1>(benefitMax),ceil((get<3>(benefitMax)/100)*portefeuille.getSolde()/get<2>(benefitMax))),achat);
-    if (get<0>(benefitMax)==vente) return Transaction(Titre(get<1>(benefitMax),ceil((get<3>(benefitMax)/100)*portefeuille.getQuantiteTitre(get<1>(benefitMax)))),vente);
-
+    int quantite;
+    pourcent = (get<3>(benefitMax)<1) ? 1 : get<3>(benefitMax) ;
+    if (get<0>(benefitMax)==achat) {
+          //  quantite = (pourcent/100)*(portefeuille.getSolde())
+          //  cout<<endl<<"********* pourcentage : "<<pourcent<<"% | le solde du portfeuille : "<<portefeuille.getSolde()<<" | prix de l'action : "<<get<2>(benefitMax)<<endl;
+            return Transaction(Titre(get<1>(benefitMax),floor((pourcent/100)*portefeuille.getSolde()/get<2>(benefitMax))),achat);
+    }
+    if (get<0>(benefitMax)==vente) {
+           // cout<<endl<<"********* pourcentage : "<<pourcent<<"% | le solde du portfeuille : "<<portefeuille.getSolde()<<" | prix de l'action : "<<get<2>(benefitMax)<<endl;
+            return Transaction(Titre(get<1>(benefitMax),floor((pourcent/100)*portefeuille.getQuantiteTitre(get<1>(benefitMax)))),vente);
+    }
     return tx;
 }
 

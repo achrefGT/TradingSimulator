@@ -166,13 +166,13 @@ int main(){
 
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
-    Trader* trader = new TraderPondere();
+    Trader* trader = new TraderMoyenne();
 
     //cout<<(trader->choisirTransaction(*bourse,pf1));
 
 
     Date d7(4,1,2010);
-    Date d8(5,2,2011);
+    Date d8(4,4,2010);
 
     cout<<endl<<"**********************"<<endl<<endl;
     auto stats = Simulation::executer(*bourse,*trader,d7,d8,2000);

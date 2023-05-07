@@ -55,10 +55,10 @@ public:
         for (Date date = dateDebut; date <= dateFin; date.incrementerDate()){
             if (!bourse.getActionsDisponiblesParDate(date).empty()){
                 cout<<"les transactions effectuees pendant la date : "<<date<<" solde : "<<portfeuil.getSolde()<<endl;
-                for (int i=0;i<1+rand()%100;i++){
+                for (int i=0;i<100;i++){
                // for (int i=0;i<3;i++){
                     Transaction transaction=trader.choisirTransaction(bourse,portfeuil);
-                    if (transaction.getType() == rien || transaction.getTitre().getQuantite()==0 )  cout<<" -- "<<transaction<<endl;
+                    if (transaction.getType() == rien || transaction.getTitre().getQuantite()==0 )  cout<<" -- rien"<<endl;
                     else{
                         if (transaction.getType() == achat && transaction.getTitre().getQuantite()>0 && (prix=prixAction(bourse.getPrixJournaliersParDate(date),transaction.getTitre().getNomAction()))){
                             if (portfeuil.retirerMontant(transaction.getTitre().getQuantite()*prix) && portfeuil.ajouterTitre(transaction.getTitre())){

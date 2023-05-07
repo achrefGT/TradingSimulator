@@ -168,7 +168,7 @@ int main(){
 
     Trader* trader = new TraderAleatoire();
 
-    cout<<(trader->choisirTransaction(*bourse,pf1));
+    //cout<<(trader->choisirTransaction(*bourse,pf1));
 
 
     Date d7(4,1,2010);

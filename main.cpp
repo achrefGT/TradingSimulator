@@ -166,7 +166,7 @@ int main(){
 
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
-    Trader* trader = new TraderAleatoire();
+    Trader* trader = new TraderPondere();
 
     //cout<<(trader->choisirTransaction(*bourse,pf1));
 

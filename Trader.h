@@ -63,6 +63,56 @@ Transaction TraderAleatoire::choisirTransaction(const Bourse& bourse, const Port
     return tx;
 }
 
+class TraderCheapestAndMostValuable : public Trader {
+public:
+    Transaction choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille);
+};
+Transaction TraderCheapestAndMostValuable::choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille) {
+    Transaction tx;
+    vector<PrixJournalier> actionsDisponibles = bourse.getPrixJournaliersParDate(bourse.getDateAujourdHui(), portefeuille.getSolde());
+    vector<Titre> titresDisponibles = portefeuille.getTitres();
+    if (actionsDisponibles.empty() && titresDisponibles.empty()) return Transaction ();
+
+    // Find the cheapest and most valuable titles
+    string cheapestTitre;
+    double cheapestPrice = numeric_limits<double>::max();
+    string mostValuableTitre;
+    double mostValuablePrice = 0.0;
+
+    for (const PrixJournalier& prix : actionsDisponibles) {
+        if (prix.getPrix() < cheapestPrice) {
+            cheapestPrice = prix.getPrix();
+            cheapestTitre = prix.getNomAction();
+        }
+        if (prix.getPrix() > mostValuablePrice) {
+            mostValuablePrice = prix.getPrix();
+            mostValuableTitre = prix.getNomAction();
+        }
+    }
+
+    // Sell non-profitable titles
+    for (const Titre& titre : titresDisponibles) {
+        if (titre.getQuantite() > 0) {
+            if (actionsDisponibles.empty() || titre.getNomAction() != mostValuableTitre) {
+                tx = Transaction(titre, vente);
+                return tx;
+            }
+        }
+    }
+
+    // Buy the cheapest title if affordable
+    if (cheapestPrice != numeric_limits<double>::max()) {
+        double maxAffordableQuantity = portefeuille.getSolde() / cheapestPrice;
+        int quantityToBuy = static_cast<int>(floor(maxAffordableQuantity));
+        if (quantityToBuy > 0) {
+            tx = Transaction(Titre(cheapestTitre, quantityToBuy), achat);
+            return tx;
+        }
+    }
+
+    return tx; // Return empty transaction if no suitable action is found
+}
+
 class TraderMoyenne : public Trader {
     private :
         static map<string,vector<double>> actions;
@@ -122,6 +172,64 @@ Transaction TraderMoyenne::choisirTransaction(const Bourse& bourse, const Portef
 
     return tx;
 }
+
+class TraderPondere : public Trader
+{
+    public:
+        Transaction choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille);
+};
+
+Transaction TraderPondere::choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille) {
+    Transaction tx;
+    vector<PrixJournalier> actionsDisponibles = bourse.getPrixJournaliersParDate(bourse.getDateAujourdHui(), portefeuille.getSolde());
+    vector<Titre> titresDisponibles = portefeuille.getTitres();
+    if (actionsDisponibles.empty() && titresDisponibles.empty()) {
+        return Transaction(); // Rien à faire si le portefeuille est vide et qu'il n'y a pas d'actions disponibles
+    }
+    typeTransaction type = rien;
+    int i = 0, taille = 0, quantite = 0;
+    double meilleurRatio = 0;
+    for (i = 0, taille = actionsDisponibles.size(); i < taille; i++) {
+        vector<PrixJournalier> prixJournaliers = bourse.getPrixJournaliersParDate(actionsDisponibles[i].getDate(), 5);
+        double sommePrix = 0;
+        for (int j = 0; j < 5; j++) {
+            sommePrix += prixJournaliers[j].getPrix();
+        }
+        double moyenneMobile = sommePrix / 5;
+        double ratio = actionsDisponibles[i].getPrix() / moyenneMobile;
+        if (ratio > meilleurRatio) {
+            meilleurRatio = ratio;
+            type = achat;
+            quantite = floor(portefeuille.getSolde() / actionsDisponibles[i].getPrix()); // acheter autant que possible avec le solde disponible
+            tx = Transaction(Titre(actionsDisponibles[i].getNomAction(), quantite), type);
+        }
+    }
+    for (i = 0, taille = titresDisponibles.size(); i < taille; i++) {
+        vector<PrixJournalier> prixJournaliers = bourse.getPrixJournaliersParDate(bourse.getDateAujourdHui(), 5);
+        double sommePrix = 0;
+        PrixJournalier prixJournalier;
+        for (int j = 0; j < 5; j++) {
+            // Search through the vector of PrixJournalier objects for the appropriate object for this Titre
+            for (int k = 0; k < prixJournaliers.size(); k++) {
+                if (prixJournaliers[k].getNomAction() == titresDisponibles[i].getNomAction()) {
+                    prixJournalier = prixJournaliers[k];
+                    break;
+                }
+            }
+            sommePrix += prixJournalier.getPrix();
+        }
+        double moyenneMobile = sommePrix / 5;
+        double ratio = prixJournalier.getPrix() / moyenneMobile;
+        if (ratio < meilleurRatio) {
+            meilleurRatio = ratio;
+            type = vente;
+            quantite = titresDisponibles[i].getQuantite(); // vendre toutes les actions de ce type disponibles dans le portefeuille
+            tx = Transaction(Titre(titresDisponibles[i].getNomAction(), quantite), type);
+        }
+    }
+    return tx;
+}
+
 
 
 #endif // TRADER_H_INCLUDED

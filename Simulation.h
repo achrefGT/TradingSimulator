@@ -53,26 +53,28 @@ public:
         auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
         stats["TEMPS_GET_ACTIONS_DISPO_AUJ_microsec"]=duration.count();
         for (Date date = dateDebut; date <= dateFin; date.incrementerDate()){
-            auto actionsAujourdhui = bourse.getActionsDisponiblesParDate(date);
-            cout<<"les transactions effectuees pendant la date : "<<date<<endl;
-            for (int i=0;i<1+rand()%100;i++){
-                Transaction transaction=trader.choisirTransaction(bourse,portfeuil);
-                if (transaction.getType() == rien )  cout<<" -- "<<transaction<<endl;
-                else{
-                    if (transaction.getType() == achat && transaction.getTitre().getQuantite()>0 && (prix=prixAction(bourse.getPrixJournaliersParDate(date),transaction.getTitre().getNomAction()))){
-                        if (portfeuil.retirerMontant(prix) && portfeuil.ajouterTitre(transaction.getTitre())){
-                            stats["NB_ACHATS"]++;
-                            cout<<" -> "<<transaction<<endl;
-                        }
-                        else cout << "ACHAT IMPOSSIBLE" << endl;
+            if (!bourse.getActionsDisponiblesParDate(date).empty()){
+                cout<<"les transactions effectuees pendant la date : "<<date<<" solde : "<<portfeuil.getSolde()<<endl;
+                for (int i=0;i<1+rand()%100;i++){
+               // for (int i=0;i<3;i++){
+                    Transaction transaction=trader.choisirTransaction(bourse,portfeuil);
+                    if (transaction.getType() == rien || transaction.getTitre().getQuantite()==0 )  cout<<" -- "<<transaction<<endl;
+                    else{
+                        if (transaction.getType() == achat && transaction.getTitre().getQuantite()>0 && (prix=prixAction(bourse.getPrixJournaliersParDate(date),transaction.getTitre().getNomAction()))){
+                            if (portfeuil.retirerMontant(transaction.getTitre().getQuantite()*prix) && portfeuil.ajouterTitre(transaction.getTitre())){
+                                stats["NB_ACHATS"]++;
+                                cout<<" -> "<<transaction<<" "<<prix<<endl;
+                            }
+                            else cout << "ACHAT IMPOSSIBLE" << endl;
 
-                    }
-                    else if (transaction.getType() == vente && transaction.getTitre().getQuantite()>0 && (prix=prixAction(bourse.getHistorique(),transaction.getTitre().getNomAction()))){
-                        if (portfeuil.deposerMontant(prix*transaction.getTitre().getQuantite()) && portfeuil.retirerTitre(transaction.getTitre())){
-                            stats["NB_VENTES"]++;
-                            cout<<" <- "<<transaction<<endl;
                         }
-                        else cout << "VENTE IMPOSSIBLE" << endl;
+                        else if (transaction.getType() == vente && transaction.getTitre().getQuantite()>0 && (prix=prixAction(bourse.getHistorique(),transaction.getTitre().getNomAction()))){
+                            if (portfeuil.deposerMontant(prix*transaction.getTitre().getQuantite()) && portfeuil.retirerTitre(transaction.getTitre())){
+                                stats["NB_VENTES"]++;
+                                cout<<" <- "<<transaction<<" "<<prix<<endl;
+                            }
+                            else cout << "VENTE IMPOSSIBLE" << endl;
+                        }
                     }
                 }
             }

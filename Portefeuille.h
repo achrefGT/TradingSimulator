@@ -12,25 +12,26 @@ class Portefeuille {
         Portefeuille(long solde = 0.0):solde(solde), titres() {};
 		long getSolde() const;
         vector<Titre> getTitres() const;
-//		bool chercherTitre (const Titre titre) const;
+		bool chercherTitre (const string) const;
 		bool ajouterTitre(const Titre& titre);
 		bool retirerTitre(const Titre& titre);
         bool deposerMontant (long );
         bool retirerMontant (long );
+        int getQuantiteTitre (const string) const;
 };
-/*
-bool chercherTitre (const Titre titre) const{
-    bool test = true;
-    for(Titre t : Titres){
-        if (t.getNomAction()==titre.getNomAction()) test=false;
+
+bool Portefeuille::chercherTitre (const string nomTitre) const{
+    bool test = false;
+    for(Titre t : titres){
+        if (t.getNomAction()==nomTitre) test=true;
     }
     return test;
-};*/
+};
 
 bool Portefeuille::ajouterTitre (const Titre& titre){
     if (titre.getQuantite()==0) return false;
     for (vector<Titre>::size_type i = 0; i<titres.size(); i++){
-		if (titres[i] == titre){                                                    // si l'action existe déjà
+		if (titres[i] == titre){                                                                                  // si l'action existe déjà
             titres.push_back(Titre(titre.getNomAction(),titre.getQuantite() + titres[i].getQuantite()));          // on ajoute une avec la nouvelle quantité
 			titres.erase(titres.begin() + i);                                                                     // puis on supprime la première
 			return true;
@@ -79,6 +80,12 @@ vector<Titre> Portefeuille::getTitres() const {
     return titres;
 }
 
+int Portefeuille::getQuantiteTitre(const string nomTitre) const{
+    for (Titre t : titres){
+        if (t.getNomAction()==nomTitre) return t.getQuantite();
+    }
+    return 0;
+}
 
 
 

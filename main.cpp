@@ -136,6 +136,12 @@ int main(){
     Test<bool>::runTest(pf1.retirerTitre(titre2),false,"Test retirerTitre de la class Portfeuille");
     pf1.retirerTitre(titre1);
     Test<long>::runTest(pf1.getTitres()[0].getQuantite(),20,"Test retirerTitre de la class Portfeuille");
+    Test<bool>::runTest(pf1.chercherTitre("APPLE"),true,"Test chercherTitre de la class Portfeuille");
+    Test<bool>::runTest(pf1.chercherTitre("APPL"),false,"Test chercherTitre de la class Portfeuille");
+    Test<int>::runTest(pf1.getQuantiteTitre("APPLE"),20,"Test getQuantiteTitre de la class Portfeuille");
+    Test<bool>::runTest(pf1.getQuantiteTitre("APPLE")==2,false,"Test getQuantiteTitre de la class Portfeuille");
+
+
 
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
@@ -151,7 +157,7 @@ int main(){
 
     cout<<endl<<"-------------------- Testes pour la class Bourse ---------------------------------"<<endl<<endl;
     Test<Date>::runTest(bourse->getDateAujourdHui(),d1,"Test getDateAujourdHui et constructeur de la calss Bourse");
-    Date dateAujourdHui(4, 1, 2010);
+    Date dateAujourdHui(8, 1, 2010);
     bourse->setDateAujourdHui(d6);
     Test<Date>::runTest(bourse->getDateAujourdHui(),d1,"Test setDateAujourdHui de la calss Bourse");
     bourse->setDateAujourdHui(dateAujourdHui);
@@ -162,11 +168,14 @@ int main(){
 
     Trader* trader = new TraderAleatoire();
 
-    Date d7(1,1,2010);
+    cout<<(trader->choisirTransaction(*bourse,pf1));
+
+
+    Date d7(4,1,2010);
     Date d8(5,2,2011);
 
     cout<<endl<<"**********************"<<endl<<endl;
-    auto stats = Simulation::executer(*bourse,*trader,d7,d8,10);
+    auto stats = Simulation::executer(*bourse,*trader,d7,d8,2000);
     for(auto it:stats){   cout<<it.first<<"\t"<<it.second<<endl; }
 
 

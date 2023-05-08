@@ -49,7 +49,7 @@ public:
         bourse.setDateAujourdHui(dateDebut);
         auto start = chrono::high_resolution_clock::now();
         auto actionsAujourdhui = bourse.getActionsDisponiblesParDate(dateFin);
-        auto stop = chrono::high_resolution_clock::now();
+        auto stop = chrono::high_resolution_clock::now();  
         auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
         stats["TEMPS_GET_ACTIONS_DISPO_AUJ_microsec"]=duration.count();
         for (Date date = dateDebut; date <= dateFin; date.incrementerDate()){
@@ -58,11 +58,15 @@ public:
                 for (int i=0;i<1+rand()%100;i++){
                // for (int i=0;i<3;i++){
                     Transaction transaction=trader.choisirTransaction(bourse,portfeuil);
-                    if (transaction.getType() == rien || transaction.getTitre().getQuantite()==0 )  cout<<" -- rien"<<endl;
+                    if (transaction.getType() == rien || transaction.getTitre().getQuantite()==0 )  cout<<" -- "<<transaction<<endl;
                     else{
                         if (transaction.getType() == achat && transaction.getTitre().getQuantite()>0 && (prix=prixAction(bourse.getPrixJournaliersParDate(date),transaction.getTitre().getNomAction()))){
                             if  ( portfeuil.ajouterTitre(transaction.getTitre())){
+<<<<<<< HEAD
                                 if ((portfeuil.retirerMontant(transaction.getTitre().getQuantite()*prix))){
+=======
+                                if ((portfeuil.retirerMontant(transaction.getTitre().getQuantite()*prix))){    
+>>>>>>> 8938d9c5edba0bf430b4741bd618cd9717f320ac
                                     stats["NB_ACHATS"]++;
                                     cout<<" -> "<<transaction<<" "<<prix<<endl;
                                 }
@@ -75,7 +79,11 @@ public:
                                   if (portfeuil.deposerMontant(prix*transaction.getTitre().getQuantite()) ) {
                                     stats["NB_VENTES"]++;
                                     cout<<" <- "<<transaction<<" "<<prix<<endl;
+<<<<<<< HEAD
                                   }
+=======
+                                  }                            
+>>>>>>> 8938d9c5edba0bf430b4741bd618cd9717f320ac
                             }
                             else cout << "VENTE IMPOSSIBLE" << endl;
                         }

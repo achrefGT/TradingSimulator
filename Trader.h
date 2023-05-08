@@ -62,7 +62,7 @@ Transaction TraderAleatoire::choisirTransaction(const Bourse& bourse, const Port
     }
     return tx;
 }
-
+/*
 class TraderCheapestAndMostValuable : public Trader {
 public:
     Transaction choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille);
@@ -134,7 +134,7 @@ Transaction TraderCheapestAndMostValuable::choisirTransaction(const Bourse& bour
 
     return tx; // Return empty transaction if no suitable action is found
 }
-
+*/
 class TraderMoyenne : public Trader {
     private :
         static map<string,vector<double>> actions;

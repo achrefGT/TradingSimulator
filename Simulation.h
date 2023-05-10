@@ -15,15 +15,7 @@ using namespace std;
 
 
 
-double prixAction (vector<PrixJournalier> vect,string nomAction){
-    double prix=0;
-    for(const PrixJournalier& pj : vect){
-        if (pj.getNomAction()==nomAction) {
-            prix=pj.getPrix();
-        }
-    };
-    return prix;
-}
+
 
 
 class Simulation {
@@ -49,41 +41,33 @@ public:
         bourse.setDateAujourdHui(dateDebut);
         auto start = chrono::high_resolution_clock::now();
         auto actionsAujourdhui = bourse.getActionsDisponiblesParDate(dateFin);
-        auto stop = chrono::high_resolution_clock::now();  
+        auto stop = chrono::high_resolution_clock::now();
         auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
         stats["TEMPS_GET_ACTIONS_DISPO_AUJ_microsec"]=duration.count();
         for (Date date = dateDebut; date <= dateFin; date.incrementerDate()){
             if (!bourse.getActionsDisponiblesParDate(date).empty()){
                 cout<<"les transactions effectuees pendant la date : "<<date<<" solde : "<<portfeuil.getSolde()<<endl;
-                for (int i=0;i<1+rand()%100;i++){
-               // for (int i=0;i<3;i++){
+               // for (int i=0;i<1+rand()%100;i++){
+                for (int i=0;i<3;i++){
                     Transaction transaction=trader.choisirTransaction(bourse,portfeuil);
-                    if (transaction.getType() == rien || transaction.getTitre().getQuantite()==0 )  cout<<" -- "<<transaction<<endl;
+                    if (transaction.getType() == rien || transaction.getTitre().getQuantite()==0 )  cout<<" -- rien"<<endl;
                     else{
-                        if (transaction.getType() == achat && transaction.getTitre().getQuantite()>0 && (prix=prixAction(bourse.getPrixJournaliersParDate(date),transaction.getTitre().getNomAction()))){
-                            if  ( portfeuil.ajouterTitre(transaction.getTitre())){
-<<<<<<< HEAD
-                                if ((portfeuil.retirerMontant(transaction.getTitre().getQuantite()*prix))){
-=======
-                                if ((portfeuil.retirerMontant(transaction.getTitre().getQuantite()*prix))){    
->>>>>>> 8938d9c5edba0bf430b4741bd618cd9717f320ac
-                                    stats["NB_ACHATS"]++;
-                                    cout<<" -> "<<transaction<<" "<<prix<<endl;
+                        if (transaction.getType() == achat && transaction.getTitre().getQuantite()>0 && (prix=bourse.prixAction(bourse.getPrixJournaliersParDate(date),transaction.getTitre().getNomAction()))){
+                                if  ( portfeuil.ajouterTitre(transaction.getTitre())){
+                                    if ((portfeuil.retirerMontant(transaction.getTitre().getQuantite()*prix))){
+                                        stats["NB_ACHATS"]++;
+                                        cout<<" -> "<<transaction<<" "<<prix<<endl;
+                                    }
                                 }
-                            }
                                 else cout << "ACHAT IMPOSSIBLE" << endl;
 
                         }
-                        else if (transaction.getType() == vente && transaction.getTitre().getQuantite()>0 && (prix=prixAction(bourse.getHistorique(),transaction.getTitre().getNomAction()))){
+                        else if (transaction.getType() == vente && transaction.getTitre().getQuantite()>0 && (prix=bourse.prixAction(bourse.getHistorique(),transaction.getTitre().getNomAction()))){
                             if ( portfeuil.retirerTitre(transaction.getTitre())){
                                   if (portfeuil.deposerMontant(prix*transaction.getTitre().getQuantite()) ) {
                                     stats["NB_VENTES"]++;
                                     cout<<" <- "<<transaction<<" "<<prix<<endl;
-<<<<<<< HEAD
                                   }
-=======
-                                  }                            
->>>>>>> 8938d9c5edba0bf430b4741bd618cd9717f320ac
                             }
                             else cout << "VENTE IMPOSSIBLE" << endl;
                         }
@@ -94,7 +78,7 @@ public:
         }
         long valueTitres=0;
         for(Titre t : portfeuil.getTitres()){
-            valueTitres+=t.getQuantite()*prixAction(bourse.getPrixJournaliersParDate(dateFin),t.getNomAction());
+            valueTitres+=t.getQuantite()*bourse.prixAction(bourse.getPrixJournaliersParDate(dateFin),t.getNomAction());
         };
         stats["NB_TRANSACTIONS"]=stats["NB_ACHATS"]+stats["NB_VENTES"];
         stats["VALEUR_TITRES"] = valueTitres+portfeuil.getSolde();

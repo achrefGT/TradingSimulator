@@ -18,8 +18,20 @@ class Bourse {
         virtual vector<string> getActionsDisponiblesParDate(Date,double prixMax = 0.0) const = 0;
         virtual vector<PrixJournalier> getPrixJournaliersParDate(Date,double prixMax = 0.0) const = 0;
         virtual vector<PrixJournalier> getHistorique() const = 0;
+        double prixAction(const vector<PrixJournalier>&,const string&) const;
 };
 
+double Bourse::prixAction (const vector<PrixJournalier>& vect,const string& nomAction) const {
+    double prix=0;
+    for(const PrixJournalier& pj : vect){
+        if (pj.getNomAction()==nomAction) {
+            prix=pj.getPrix();
+        }
+    };
+    return prix;
+}
+
+///////////////////////////////// Bourse Vecteur /////////////////////////////////////////////
 
 class BourseVector : public Bourse {
     private:
@@ -39,7 +51,7 @@ vector<PrixJournalier> BourseVector::getHistorique() const {
         }
     };
     return hist;
-    }
+}
 
 
 vector<string> BourseVector::getActionsDisponiblesParDate(Date date,double prixMax=0.0) const{
@@ -65,6 +77,57 @@ vector<PrixJournalier> BourseVector::getPrixJournaliersParDate(Date date,double 
     }
     return prixJournaliers;
 }
+
+///////////////////////////////// Bourse Multimap /////////////////////////////////////////////
+
+class BourseMultimap : public Bourse {
+private :
+    multimap<Date,PrixJournalier> historique;
+public :
+    BourseMultimap(Date date,multimap<Date,PrixJournalier> mmap) : Bourse(date),historique(mmap) {};
+    vector<string> getActionsDisponiblesParDate(Date,double) const;
+    vector<PrixJournalier> getPrixJournaliersParDate(Date,double) const;
+    vector<PrixJournalier> getHistorique() const;
+
+};
+
+vector<string> BourseMultimap::getActionsDisponiblesParDate(Date date, double prixMax) const {
+    vector<string> actionsDisponibles;
+    for (const auto& pair : historique) {
+        const Date& d = pair.first;
+        const PrixJournalier& pj = pair.second;
+        if (d == date && ((prixMax && pj.getPrix()<=prixMax) || !prixMax)) {
+            actionsDisponibles.push_back(pj.getNomAction());
+        }
+    }
+    return actionsDisponibles;
+}
+
+
+
+vector<PrixJournalier> BourseMultimap::getPrixJournaliersParDate(Date date,double prixMax=0.0) const{
+    vector<PrixJournalier> prixJournalier;
+    for (const auto& pair : historique) {
+        const Date& d = pair.first;
+        const PrixJournalier& pj = pair.second;
+        if (d == date && ((prixMax && pj.getPrix()<=prixMax) || !prixMax)) {
+            prixJournalier.push_back(pj);
+        }
+    }
+    return prixJournalier;
+}
+
+vector<PrixJournalier> BourseMultimap::getHistorique() const {
+    vector<PrixJournalier> hist;
+    for (const auto& pair : historique) {
+        const PrixJournalier& pj = pair.second;
+        if (pj.getDate() <= dateAujourdHui) {
+            hist.push_back(pj);
+        }
+    }
+    return hist;
+}
+
 
 
 #endif // BOURSE_H_INCLUDED

@@ -6,8 +6,8 @@ using namespace std;
 template<class T>
 class Test {
 public:
-    static void runTest(T expression,T expectation, string nomTest) {
-        expression == expectation ? cout << "Test reussi : " << nomTest << endl : cout << "Test echoue : " << nomTest << endl;
+    static void runTest(T valeur,T valeurAttendue, string nomTest) {
+        valeur == valeurAttendue ? cout << "Test reussi : " << nomTest << endl : cout << "Test echoue : " << nomTest << endl;
     }
 };
 

@@ -93,6 +93,12 @@ int main(){
     Test<Date>::runTest(pj2.getDate(), pj3.getDate(), "Test operator>> et operator<< et getDate de la class PrixJournalier");
     Test<double>::runTest(pj2.getPrix(), pj3.getPrix(), "Test operator>> et operator<< et getPrix de la class PrixJournalier");
     Test<string>::runTest(pj2.getNomAction(), pj3.getNomAction(), "Test operator>> et operator<< et getNomAction de la class PrixJournalier");
+    Test<bool>::runTest(pj1<pj2,true,"Test operator < de la class PrixJournalier");
+    PrixJournalier pj4(date,50,"google");
+    Test<bool>::runTest(pj4<pj2,true,"Test operator < de la class PrixJournalier");
+    PrixJournalier pj5(date,50,"zzz");
+    Test<bool>::runTest(pj4<pj5,true,"Test operator < de la class PrixJournalier");
+
 
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 

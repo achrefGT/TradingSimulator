@@ -18,8 +18,7 @@ class PrixJournalier{
         string getNomAction() const { return nomAction; };
         Date getDate() const { return date; };
         double getPrix() const { return prix; };
-
-
+        bool operator<(const PrixJournalier& ) const;
 
 };
 
@@ -41,5 +40,15 @@ istream& operator>> (istream& flux, PrixJournalier& pj){
     return flux;
 }
 
+bool PrixJournalier::operator<(const PrixJournalier& other) const{
+
+    return this->getDate() < other.getDate() ? true : (this->getPrix() < other.getPrix() ? true : (this->getNomAction() < other.getNomAction() ? true : false));
+
+    /*bool resultat = this->getDate() < other.getDate();
+    if(this->getDate()other.getDate()){
+        resultat = this->getPrix() < other.getPrix();
+    }
+    return resultat;*/
+}
 
 #endif // PRIXJOURNALIER_H_INCLUDED

@@ -12,12 +12,6 @@
 
 using namespace std;
 
-
-
-
-
-
-
 class Simulation {
 private:
     Date dateDebutSimulation;
@@ -47,8 +41,8 @@ public:
         for (Date date = dateDebut; date <= dateFin; date.incrementerDate()){
             if (!bourse.getActionsDisponiblesParDate(date).empty()){
                 cout<<"les transactions effectuees pendant la date : "<<date<<" solde : "<<portfeuil.getSolde()<<endl;
-               // for (int i=0;i<1+rand()%100;i++){
-                for (int i=0;i<3;i++){
+                for (int i=0;i<1+rand()%100;i++){
+               // for (int i=0;i<3;i++){
                     Transaction transaction=trader.choisirTransaction(bourse,portfeuil);
                     if (transaction.getType() == rien || transaction.getTitre().getQuantite()==0 )  cout<<" -- rien"<<endl;
                     else{

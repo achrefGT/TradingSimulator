@@ -8,6 +8,7 @@
 #include <chrono>
 #include <map>
 #include <tuple>
+#include <set>
 #include "Bourse.h"
 #include "Date.h"
 #include "PrixJournalier.h"
@@ -172,7 +173,7 @@ int main(){
 
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
-    Trader* trader = new TraderMoyenne();
+    Trader* trader = new TraderPondere();
 
    // cout<<(trader->choisirTransaction(*bourse,pf1));
 

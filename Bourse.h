@@ -177,5 +177,58 @@ map<string,vector<double>> BourseMultimap::getPrixActionParMois (string nomActio
     return resultat;
 }
 
+//////////////////// BourseSet ////////////////
+
+class BourseSet : public Bourse {
+private:
+    set<PrixJournalier> historique;
+
+public:
+    BourseSet(Date dte,set<PrixJournalier>& h) : Bourse(dte), historique(h) {}
+
+    vector<string> getActionsDisponiblesParDate(Date d, double prixMax = 0.0) const  {
+        vector<string> actions;
+        auto it = historique.lower_bound(PrixJournalier(d, 0,""));
+        while (!(it == historique.end()) && (it->getDate() == d)) {
+            actions.push_back(it->getNomAction());
+            it++;
+        }
+        return actions;
+    }
+
+    vector<PrixJournalier> getPrixJournaliersParDate(Date d, double prixMax = 0.0) const  {
+        vector<PrixJournalier> Pj;
+        auto it = historique.lower_bound(PrixJournalier(d, 0,""));
+        while (!(it == historique.end()) && (it->getDate() == d) && (it->getPrix() <= prixMax)) {
+            Pj.push_back(*it);
+            it++;
+        }
+        return Pj;
+    }
+    vector<PrixJournalier> getHistorique() const {
+    vector<PrixJournalier> hist;
+    for (const PrixJournalier& pj : historique) {
+        if (pj.getDate() <= dateAujourdHui) {
+                hist.push_back(pj);
+        }
+    };
+    return hist;
+    }
+
+    map<string,vector<double>> getPrixActionParMois (string nomAction="",int mois=0) const{
+        map<string,vector<double>> resultat;
+        mois = (!mois || mois>=13 || mois<=0) ? (dateAujourdHui.getMois()!=1 ? dateAujourdHui.getMois()-1 : 1 ) : mois;
+        vector<PrixJournalier> hist = this->getHistorique();
+        for (const PrixJournalier& pj : hist){
+            if(pj.getDate().getMois()==mois && dateAujourdHui.getAnnee()==pj.getDate().getAnnee()){
+                if(nomAction == "" || nomAction==pj.getNomAction()){
+                    resultat[pj.getNomAction()].push_back(pj.getPrix());
+                }
+            }
+        }
+        return resultat;
+}
+};
+
 #endif // BOURSE_H_INCLUDED
 

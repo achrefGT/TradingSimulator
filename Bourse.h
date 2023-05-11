@@ -49,7 +49,7 @@ class BourseVector : public Bourse {
 
 map<string,vector<double>> BourseVector::getPrixActionParMois (string nomAction="",int mois=0) const{
     map<string,vector<double>> resultat;
-    mois = (!mois || mois>=13 || mois<=0) ? dateAujourdHui.getMois() : mois;
+    mois = (!mois || mois>=13 || mois<=0) ? (dateAujourdHui.getMois()!=1 ? dateAujourdHui.getMois()-1 : 1 ) : mois;
     vector<PrixJournalier> hist = this->getHistorique();
     for (const PrixJournalier& pj : hist){
         if(pj.getDate().getMois()==mois && dateAujourdHui.getAnnee()==pj.getDate().getAnnee()){
@@ -160,7 +160,7 @@ vector<PrixJournalier> BourseMultimap::getHistorique() const {
 map<string,vector<double>> BourseMultimap::getPrixActionParMois (string nomAction="",int mois=0) const{
     map<string,vector<double>> resultat;
     int annee = dateAujourdHui.getAnnee();
-    mois = (!mois || mois>=13 || mois<=0) ? dateAujourdHui.getMois() : mois;
+    mois = (!mois || mois>=13 || mois<=0) ? (dateAujourdHui.getMois()!=1 ? dateAujourdHui.getMois()-1 : 1 ) : mois;
     Date dateDebut(1,mois,dateAujourdHui.getAnnee());
     Date dateFin = dateDebut.isLeap() ? Date (29,mois,annee) : (dateDebut.verifDate30() ? Date(30,mois,annee) : (dateDebut.verifDate31() ? Date(31,mois,annee) : Date(28,mois,annee)));
 

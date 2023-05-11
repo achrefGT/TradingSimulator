@@ -181,7 +181,7 @@ int main(){
     Date d8(4,4,2011);
 
     cout<<endl<<"**********************"<<endl<<endl;
-    auto stats = Simulation::executer(*bourse,*trader,d7,d8,100);
+    auto stats = Simulation::executer(*bourse,*trader,d7,d8,10000);
     for(auto it:stats){   cout<<it.first<<"\t"<<it.second<<endl; }
 
 

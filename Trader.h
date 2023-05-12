@@ -217,54 +217,52 @@ Transaction TraderPondere::choisirTransaction(const Bourse& bourse, const Portef
     Transaction tx;
     vector<PrixJournalier> actionsDisponibles = bourse.getPrixJournaliersParDate(bourse.getDateAujourdHui(), portefeuille.getSolde());
     vector<Titre> titresDisponibles = portefeuille.getTitres();
-    if (actionsDisponibles.empty() && titresDisponibles.empty()) {
-        return Transaction(); // Rien à faire si le portefeuille est vide et qu'il n'y a pas d'actions disponibles
+    if (actionsDisponibles.empty() && portefeuille.getTitres().empty()) {
+        return Transaction(); // Rien Ã  faire si le portefeuille est vide et qu'il n'y a pas d'actions disponibles
     }
     typeTransaction type = rien;
-    int i = 0, taille = 0, quantite = 0;
+    int quantite = 0;
     double meilleurRatio = 0;
-    for (i = 0, taille = actionsDisponibles.size(); i < taille; i++) {
-        vector<PrixJournalier> prixJournaliers = bourse.getPrixJournaliersParDate(actionsDisponibles[i].getDate(), 5);
+
+    // Calculate the moyenneMobile values for all PrixJournalier objects in actionsDisponibles
+    map<string, double> moyenneMobiles;
+    for (const PrixJournalier& prixJournalier : actionsDisponibles) {
+        vector<PrixJournalier> prixJournaliers = bourse.getPrixJournaliersParDate(prixJournalier.getDate(), 5);
         double sommePrix = 0;
         for (int j = 0; j < 5; j++) {
             sommePrix += prixJournaliers[j].getPrix();
         }
         double moyenneMobile = sommePrix / 5;
-        double ratio = actionsDisponibles[i].getPrix() / moyenneMobile;
+        moyenneMobiles[prixJournalier.getNomAction()] = moyenneMobile;
+    }
+
+    for (const PrixJournalier& prixJournalier : actionsDisponibles) {
+        double moyenneMobile = moyenneMobiles[prixJournalier.getNomAction()];
+        double ratio = prixJournalier.getPrix() / moyenneMobile;
         if (ratio > meilleurRatio) {
             meilleurRatio = ratio;
             type = achat;
-            quantite = floor(portefeuille.getSolde() / actionsDisponibles[i].getPrix()); // acheter autant que possible avec le solde disponible
-            tx = Transaction(Titre(actionsDisponibles[i].getNomAction(), quantite), type);
+            quantite = floor(portefeuille.getSolde() / prixJournalier.getPrix()); // acheter autant que possible avec le solde disponible
+            tx = Transaction(Titre(prixJournalier.getNomAction(), quantite), type);
         }
     }
-    for (i = 0, taille = titresDisponibles.size(); i < taille; i++) {
-        vector<PrixJournalier> prixJournaliers = bourse.getPrixJournaliersParDate(bourse.getDateAujourdHui(), 5);
-        double sommePrix = 0;
-        PrixJournalier prixJournalier;
-        for (int j = 0; j < 5; j++) {
-            // Search through the vector of PrixJournalier objects for the appropriate object for this Titre
-            for (int k = 0; k < prixJournaliers.size(); k++) {
-                if (prixJournaliers[k].getNomAction() == titresDisponibles[i].getNomAction()) {
-                    prixJournalier = prixJournaliers[k];
-                    break;
-                }
-            }
-            sommePrix += prixJournalier.getPrix();
-        }
-        double moyenneMobile = sommePrix / 5;
+    map<string, PrixJournalier> prixJournaliersMap;
+    for (const PrixJournalier& prixJournalier : bourse.getPrixJournaliersParDate(bourse.getDateAujourdHui(), 5)) {
+        prixJournaliersMap[prixJournalier.getNomAction()] = prixJournalier;
+    }
+    for (const Titre& titre : titresDisponibles) {
+        const PrixJournalier& prixJournalier = prixJournaliersMap[titre.getNomAction()];
+        double moyenneMobile = moyenneMobiles[titre.getNomAction()];
         double ratio = prixJournalier.getPrix() / moyenneMobile;
         if (ratio < meilleurRatio) {
             meilleurRatio = ratio;
             type = vente;
-            quantite = titresDisponibles[i].getQuantite(); // vendre toutes les actions de ce type disponibles dans le portefeuille
-            tx = Transaction(Titre(titresDisponibles[i].getNomAction(), quantite), type);
+            quantite = titre.getQuantite(); // vendre toutes les actions de ce type disponibles dans le portefeuille
+            tx = Transaction(Titre(titre.getNomAction(), quantite), type);
         }
     }
     return tx;
 }
-
-
 
 #endif // TRADER_H_INCLUDED
 

@@ -26,7 +26,7 @@ public:
             {"NB_TRANSACTIONS", 0},
             {"NB_ACHATS", 0},
             {"NB_VENTES", 0},
-            {"TEMPS_GET_ACTIONS_DISPO_AUJ_microsec", 0},
+            {"TEMPS_GET_ACTIONS_DISPO_AUJ_nanosec", 0},
             {"TEMPS_SIMULATION_microsec", 0}
         };
         if (dateDebut>dateFin || budget<=0 || !(dateDebut.VerifDate() && dateFin.VerifDate())) return stats;
@@ -36,13 +36,13 @@ public:
         auto start = chrono::high_resolution_clock::now();
         auto actionsAujourdhui = bourse.getActionsDisponiblesParDate(dateFin);
         auto stop = chrono::high_resolution_clock::now();
-        auto duration = chrono::duration_cast<chrono::microseconds>(stop - start);
-        stats["TEMPS_GET_ACTIONS_DISPO_AUJ_microsec"]=duration.count();
+        auto duration = chrono::duration_cast<chrono::nanoseconds>(stop - start);
+        stats["TEMPS_GET_ACTIONS_DISPO_AUJ_nanosec"]=duration.count();
         for (Date date = dateDebut; date <= dateFin; date.incrementerDate()){
             if (!bourse.getActionsDisponiblesParDate(date).empty()){
                 cout<<"les transactions effectuees pendant la date : "<<date<<" solde : "<<portfeuil.getSolde()<<endl;
-                for (int i=0;i<1+rand()%100;i++){
-               // for (int i=0;i<100;i++){
+               // for (int i=0;i<1+rand()%100;i++){
+                for (int i=0;i<100;i++){
                     Transaction transaction=trader.choisirTransaction(bourse,portfeuil);
                     if (transaction.getType() == rien || transaction.getTitre().getQuantite()==0 )  cout<<" -- rien"<<endl;
                     else{

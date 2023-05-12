@@ -71,7 +71,7 @@ int main(){
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
     vector<PrixJournalier> historique = PersistancePrixJournaliers::lirePrixJournaliersDUnFichier("prices_simple.csv");
-    Bourse *bourse = new BourseVector(d1,historique);
+    Bourse *bourse = new BourseMultimap(d1,historique);
 
     Date date(8, 1, 2010);
     date = Date(4, 1, 2010);
@@ -164,25 +164,39 @@ int main(){
 
     cout<<endl<<"-------------------- Testes pour la class Bourse ---------------------------------"<<endl<<endl;
     Test<Date>::runTest(bourse->getDateAujourdHui(),d1,"Test getDateAujourdHui et constructeur de la calss Bourse");
-    Date dateAujourdHui(8, 1, 2010);
+    Date dateAujourdHui(4, 2, 2010);
     bourse->setDateAujourdHui(d6);
     Test<Date>::runTest(bourse->getDateAujourdHui(),d1,"Test setDateAujourdHui de la calss Bourse");
     bourse->setDateAujourdHui(dateAujourdHui);
     Test<Date>::runTest(bourse->getDateAujourdHui(),dateAujourdHui,"Test setDateAujourdHui de la calss Bourse");
-
-
+    /*for (auto ss : bourse->getHistorique()){
+        cout<<ss<<endl;
+    }*//*
+    bourse->setDateAujourdHui(Date(4,2,2010));
+    cout<<"***********************************"<<endl;
+    for (auto ss : bourse->getHistorique()){
+        cout<<ss<<endl;
+    }
+    cout<<"***********************************"<<endl;
+    for (const auto& pair : bourse->getPrixActionParMois()) {
+        const string& key = pair.first;
+        cout << "Key: " << key << std::endl;
+    }*//*
+    for (auto ss : bourse->getPrixJournaliersParDate(Date(5,1,2010))){
+        cout<<ss<<endl;
+    }
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
-    Trader* trader = new TraderPondere();
+    Trader* trader = new TraderMoyenne();
 
    // cout<<(trader->choisirTransaction(*bourse,pf1));
 
 
     Date d7(4,1,2010);
-    Date d8(4,4,2011);
+    Date d8(4,4,2010);
 
     cout<<endl<<"**********************"<<endl<<endl;
-    auto stats = Simulation::executer(*bourse,*trader,d7,d8,10000);
+    auto stats = Simulation::executer(*bourse,*trader,d7,d8,1000);
     for(auto it:stats){   cout<<it.first<<"\t"<<it.second<<endl; }
 
 

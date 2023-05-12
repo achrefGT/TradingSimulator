@@ -9,7 +9,6 @@ class PersistancePrixJournaliers
        static vector<PrixJournalier> lirePrixJournaliersDUnFichier(string chemin){
             vector<PrixJournalier> historique;
             ifstream f(chemin);
-            int nbLignes= 0;
             string entete,sJour,sMois,sAnnee,sPrix,nom;
             if(f.is_open()){
                 f>>entete;
@@ -17,10 +16,9 @@ class PersistancePrixJournaliers
                     PrixJournalier pj;
                     f>>pj;
                     historique.push_back(pj);
-                    nbLignes++;
-                    if (nbLignes==300000) break;
                 }
             }
+            f.close();
             return historique;
         }
 };

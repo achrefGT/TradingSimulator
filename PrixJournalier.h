@@ -19,8 +19,6 @@ class PrixJournalier{
         Date getDate() const { return date; };
         double getPrix() const { return prix; };
         bool operator<(const PrixJournalier& ) const;
-      //  bool operator==(const PrixJournalier& pj) const{return (pj.getDate()==date);}
-
 };
 
 
@@ -29,17 +27,15 @@ ostream& operator<< (ostream& flux , PrixJournalier pj){
     return flux;
 }
 
-istream& operator>> (istream& flux, PrixJournalier& pj){
-    string sDate,sPrix,nom;
-    getline(flux,sDate,';');
-    getline(flux,pj.nomAction,';');
-    getline(flux,sPrix);
-    stringstream ss;
-    ss << sDate;
-    ss >> pj.date;
-    pj.prix=stod(sPrix);
+istream& operator>> (istream& flux, PrixJournalier& pj) {
+    string sDate, sPrix, nom;
+    do{if(flux.eof()) return flux;}while(!(getline(flux, sDate, ';') && getline(flux, pj.nomAction, ';') && getline(flux, sPrix)));
+    stringstream ssDate(sDate);
+    ssDate >> pj.date;
+    pj.prix = stod(sPrix);
     return flux;
 }
+
 
 bool PrixJournalier::operator<(const PrixJournalier& other) const{
 

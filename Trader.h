@@ -13,13 +13,13 @@ class Trader {
 
 };
 
+///////////////////////////////// Trader Aleatoire /////////////////////////////////////////////
+
 class TraderAleatoire : public Trader {
     public :
         Transaction choisirTransaction(const Bourse& bourse, const Portefeuille &portefeuille);
 
 } ;
-
-///////////////////////////////// Trader Aleatoire /////////////////////////////////////////////
 
 Transaction TraderAleatoire::choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille) {
     Transaction tx;
@@ -144,13 +144,16 @@ Transaction TraderCheapestAndMostValuable::choisirTransaction(const Bourse& bour
 ///////////////////////////////// Trader Moyenne /////////////////////////////////////////////
 
 class TraderMoyenne : public Trader {
-    public :
-        Transaction choisirTransaction(const Bourse& bourse, const Portefeuille &portefeuille);
-        double calculerMoyenne(const vector<double>&) const;
-        double pourcentage(double,double) const;
-} ;
-
-
+private:
+    float pourcentage;
+public:
+    TraderMoyenne (int pourcentage=1) : pourcentage(pourcentage){};
+    Transaction choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille);
+    double calculerMoyenne(const vector<double>& valeurs) const;
+    double calculerPourcentage(double d1, double d2) const;
+    float getPourcentage() const {return pourcentage;};
+    void setPourcentage(float pourcent) {pourcentage=pourcent;};
+};
 
 double TraderMoyenne::calculerMoyenne(const vector<double>& valeurs) const {
     double somme = 0.0;
@@ -160,43 +163,42 @@ double TraderMoyenne::calculerMoyenne(const vector<double>& valeurs) const {
     return somme / valeurs.size();
 }
 
-double TraderMoyenne::pourcentage(double d1,double d2) const{
-    return ((d1-d2)/d1)*100.0;
+double TraderMoyenne::calculerPourcentage(double d1, double d2) const {
+    return ((d1 - d2) / d1) * 100.0;
 }
 
-Transaction TraderMoyenne::choisirTransaction(const Bourse& bourse, const Portefeuille &portefeuille){
+Transaction TraderMoyenne::choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille) {
     Transaction tx;
     vector<PrixJournalier> actionsDisponibles = bourse.getPrixJournaliersParDate(bourse.getDateAujourdHui(), portefeuille.getSolde()); // avoir une copie des prix journaliers disponibles
     vector<Titre> titresDisponibles = portefeuille.getTitres();
     if (actionsDisponibles.empty() && titresDisponibles.empty()) return tx;
-    map<string,vector<double>> actions = bourse.getPrixActionParMois();
-    if (titresDisponibles.empty()){
-        tuple<string,double> actionMin = make_tuple("",portefeuille.getSolde());
-        for (PrixJournalier pj : actionsDisponibles){
-            actionMin = (pj.getPrix() < get<1>(actionMin)) ? make_tuple(pj.getNomAction(),pj.getPrix()) : actionMin ;
+    map<string, vector<double>> actions = bourse.getPrixActionParMois();
+    if (titresDisponibles.empty()) {
+        tuple<string, double> actionMin = make_tuple("", portefeuille.getSolde());
+        for (PrixJournalier pj : actionsDisponibles) {
+            actionMin = (pj.getPrix() < get<1>(actionMin)) ? make_tuple(pj.getNomAction(), pj.getPrix()) : actionMin;
         }
-        return Transaction (Titre(get<0>(actionMin),floor(portefeuille.getSolde()/(10*get<1>(actionMin)))),achat);
+        return Transaction(Titre(get<0>(actionMin), floor(portefeuille.getSolde() / (10 * get<1>(actionMin)))), achat);
     }
     double pourcent;
     tuple<typeTransaction, string, double, double> benefitMax = make_tuple(rien, "", 0.0, 0.0);
-    for (PrixJournalier pj : actionsDisponibles){
+    for (PrixJournalier pj : actionsDisponibles) {
         auto action = actions.find(pj.getNomAction());
         double prixMoyen;
-        if ( action != actions.end() ){
+        if (action != actions.end()) {
             prixMoyen = this->calculerMoyenne(action->second);
-            if (prixMoyen > pj.getPrix()){
-                pourcent = pourcentage(prixMoyen,pj.getPrix());
-                benefitMax = (pourcent >= 1  && pourcent >= get<3>(benefitMax)) ? make_tuple(achat, pj.getNomAction(), pj.getPrix(), pourcent) : benefitMax;
+            if (prixMoyen > pj.getPrix()) {
+                pourcent = calculerPourcentage(prixMoyen, pj.getPrix());
+                benefitMax = (pourcent >= pourcentage && pourcent >= get<3>(benefitMax)) ? make_tuple(achat, pj.getNomAction(), pj.getPrix(), pourcent) : benefitMax;
             }
-            else if (prixMoyen < pj.getPrix() && portefeuille.chercherTitre(pj.getNomAction()) ) {
-                pourcent = -1 * pourcentage(prixMoyen,pj.getPrix());
-                benefitMax = (pourcent >= 1 && pourcent >= get<3>(benefitMax)) ? make_tuple(vente, pj.getNomAction(), pj.getPrix(), pourcent) : benefitMax;
+            else if (prixMoyen < pj.getPrix() && portefeuille.chercherTitre(pj.getNomAction())) {
+                pourcent = -1 * calculerPourcentage(prixMoyen, pj.getPrix());
+                benefitMax = (pourcent >= pourcentage && pourcent >= get<3>(benefitMax)) ? make_tuple(vente, pj.getNomAction(), pj.getPrix(), pourcent) : benefitMax;
             }
-
         }
     }
-    pourcent = (get<3>(benefitMax)<1) ? 1 : get<3>(benefitMax) ;
-    if (get<0>(benefitMax)==achat) {
+    pourcent = (get<3>(benefitMax) < 1) ? 1 : get<3>(benefitMax);
+    if (get<0>(benefitMax) == achat){
             return Transaction(Titre(get<1>(benefitMax),floor((pourcent/100)*portefeuille.getSolde()/get<2>(benefitMax))),achat);
     }
     if (get<0>(benefitMax)==vente) {

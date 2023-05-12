@@ -9,6 +9,7 @@
 #include <map>
 #include <tuple>
 #include <set>
+#include <algorithm>
 #include "Bourse.h"
 #include "Date.h"
 #include "PrixJournalier.h"
@@ -71,7 +72,7 @@ int main(){
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
     vector<PrixJournalier> historique = PersistancePrixJournaliers::lirePrixJournaliersDUnFichier("prices_simple.csv");
-    Bourse *bourse = new BourseMultimap(d1,historique);
+    Bourse *bourse = new BourseMap(d1,historique);
 
     Date date(8, 1, 2010);
     date = Date(4, 1, 2010);
@@ -169,25 +170,10 @@ int main(){
     Test<Date>::runTest(bourse->getDateAujourdHui(),d1,"Test setDateAujourdHui de la calss Bourse");
     bourse->setDateAujourdHui(dateAujourdHui);
     Test<Date>::runTest(bourse->getDateAujourdHui(),dateAujourdHui,"Test setDateAujourdHui de la calss Bourse");
-    /*for (auto ss : bourse->getHistorique()){
-        cout<<ss<<endl;
-    }*//*
-    bourse->setDateAujourdHui(Date(4,2,2010));
-    cout<<"***********************************"<<endl;
-    for (auto ss : bourse->getHistorique()){
-        cout<<ss<<endl;
-    }
-    cout<<"***********************************"<<endl;
-    for (const auto& pair : bourse->getPrixActionParMois()) {
-        const string& key = pair.first;
-        cout << "Key: " << key << std::endl;
-    }*//*
-    for (auto ss : bourse->getPrixJournaliersParDate(Date(5,1,2010))){
-        cout<<ss<<endl;
-    }
+
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
-    Trader* trader = new TraderMoyenne();
+    Trader* trader = new TraderMoyenne(10);
 
    // cout<<(trader->choisirTransaction(*bourse,pf1));
 
@@ -197,7 +183,7 @@ int main(){
 
     cout<<endl<<"**********************"<<endl<<endl;
     auto stats = Simulation::executer(*bourse,*trader,d7,d8,1000);
-    for(auto it:stats){   cout<<it.first<<"\t"<<it.second<<endl; }
+    for(auto it:stats){cout<<it.first<<"\t"<<it.second<<endl; }
 
 
     return 0;

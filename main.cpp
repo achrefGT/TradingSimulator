@@ -72,7 +72,7 @@ int main(){
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
     vector<PrixJournalier> historique = PersistancePrixJournaliers::lirePrixJournaliersDUnFichier("prices_simple.csv");
-    Bourse *bourse = new BourseSet(d1,historique);
+    Bourse *bourse = new BourseMap(d1,historique);
 
     Date date(8, 1, 2010);
     date = Date(4, 1, 2010);
@@ -173,7 +173,7 @@ int main(){
 
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
-    Trader* trader = new TraderAleatoire();
+    Trader* trader = new TraderMoyenne();
 
    // cout<<(trader->choisirTransaction(*bourse,pf1));
 

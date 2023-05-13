@@ -90,6 +90,7 @@ public:
                     }
                 }
             }
+            stats["NB_PJ"] = bourse.getHistorique().size();
             bourse.setDateAujourdHui(bourse.getDateAujourdHui().incrementerDate());
         }
         long valueTitres=0;
@@ -97,13 +98,12 @@ public:
             valueTitres += t.getQuantite()*bourse.prixAction(bourse.getPrixJournaliersParDate(dateFin),t.getNomAction());
         };
         stats["NB_TX"] = stats["NB_ACHATS"] + stats["NB_VENTES"];
-        stats["VALEUR_TITRES"] = valueTitres+portfeuil.getSolde();
+        stats["VALEUR_TITRES"] = valueTitres + portfeuil.getSolde();
         auto stopSimulation = chrono::high_resolution_clock::now();
         auto durationSimulation = chrono::duration_cast<chrono::microseconds>(stopSimulation - startSimulation);
-        stats["TEMPS_SIMULATION_microsec"]+=durationSimulation.count();
-        stats["NB_PJ"] = bourse.getHistorique().size();
-        stats["%GAIN"] = ((valueTitres+portfeuil.getSolde() - budget)/budget)*100;
-        stats["GAIN"] = valueTitres+portfeuil.getSolde() - budget;
+        stats["TEMPS_SIMULATION_microsec"] += durationSimulation.count();
+        stats["%GAIN"] = ((valueTitres + portfeuil.getSolde() - budget)/budget)*100;
+        stats["GAIN"] = valueTitres + portfeuil.getSolde() - budget;
         return stats;
     };
     Date getDateDebut () const {return dateDebutSimulation;};

@@ -14,6 +14,7 @@ class Bourse {
         vector<PrixJournalier> historique;
     public:
         Bourse(Date dateAujourdHui,vector<PrixJournalier> historique) : dateAujourdHui(dateAujourdHui),historique(historique) {};
+        virtual ~Bourse(){};
         Date getDateAujourdHui() const {return dateAujourdHui;};
         double prixAction(const vector<PrixJournalier>&,const string&) const;
         virtual void setDateAujourdHui(Date date) = 0;
@@ -342,7 +343,6 @@ void BourseMap::setDateAujourdHui(Date date) {
 
 vector<string> BourseMap::getActionsDisponiblesParDate(Date date, double prixMax) const {
     vector<string> actionsDisponibles;
-
     auto it = historiqueMap.find(date);
     if (it != historiqueMap.end()) {
         for (const PrixJournalier& pj : it->second) {
@@ -373,7 +373,6 @@ vector<PrixJournalier> BourseMap::getPrixJournaliersParDate(Date date, double pr
 
 map<string,vector<double>> BourseMap::getPrixActionParMois (string nomAction="",int mois=0) const{
     map<string,vector<double>> resultat;
-
     mois = (!mois || mois>=13 || mois<=0) ? (dateAujourdHui.getMois()!=1 ? dateAujourdHui.getMois()-1 : 12 ) : mois;
     int annee = mois==12 ? dateAujourdHui.getAnnee()-1 : dateAujourdHui.getAnnee();
     Date dateDebut(1,mois,dateAujourdHui.getAnnee());

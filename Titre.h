@@ -9,6 +9,7 @@ class Titre {
         int quantite;
 	public:
 		Titre(string nomAction = "", int quantite = 0):nomAction(nomAction), quantite(quantite) {};
+		~Titre(){};
 		string getNomAction() const;
 		int getQuantite() const;
 		bool operator==(const Titre&) const;

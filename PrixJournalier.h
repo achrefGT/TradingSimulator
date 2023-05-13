@@ -13,6 +13,7 @@ class PrixJournalier{
     public:
         PrixJournalier(Date d,float p,string n) : date(d),prix(p),nomAction(n){};
         PrixJournalier() : date(Date(0,0,0)), prix(0.0), nomAction("") {}
+        ~PrixJournalier(){};
         friend ostream& operator<< (ostream& flux , PrixJournalier pj);
         friend istream& operator>> (istream& flux, PrixJournalier& pj);
         string getNomAction() const { return nomAction; };

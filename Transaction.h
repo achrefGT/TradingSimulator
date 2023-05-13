@@ -12,6 +12,7 @@ class Transaction {
         typeTransaction type;
     public :
         Transaction(Titre titre=Titre(),typeTransaction type=rien) : titre(titre),type(type){};
+        ~Transaction(){};
         Titre getTitre()const{return titre;};
         typeTransaction getType()const{return type;};
         friend ostream& operator<< (ostream& flux , Transaction tx);

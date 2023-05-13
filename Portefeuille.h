@@ -10,6 +10,7 @@ class Portefeuille {
         vector<Titre> titres;
     public :
         Portefeuille(double solde = 0.0):solde(solde), titres() {};
+		~Portefeuille(){};
 		double getSolde() const;
         vector<Titre> getTitres() const;
 		bool chercherTitre (const string) const;

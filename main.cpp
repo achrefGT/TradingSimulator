@@ -75,7 +75,7 @@ int main(){
     Bourse *bourse = new BourseMap(d1,historique);
 
     Date date(8, 1, 2010);
-    date = Date(4, 1, 2010);
+    date = Date(4, 1, 2011);
 
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
@@ -173,7 +173,7 @@ int main(){
 
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
-    Trader* trader = new TraderMoyenne(10);
+    Trader* trader = new TraderAleatoire();
 
    // cout<<(trader->choisirTransaction(*bourse,pf1));
 

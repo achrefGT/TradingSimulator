@@ -10,6 +10,7 @@ class Date {
         int annee ;
     public :
         Date(int jj,int mm,int aa);
+        ~Date(){};
         int getJour() const;
         int getMois() const;
         int getAnnee() const;

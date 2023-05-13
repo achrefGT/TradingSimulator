@@ -37,7 +37,7 @@ public:
         auto actionsAujourdhui = bourse.getActionsDisponiblesParDate(dateFin);
         auto stop = chrono::high_resolution_clock::now();
         auto duration = chrono::duration_cast<chrono::nanoseconds>(stop - start);
-        stats["TEMPS_GET_ACTIONS_DISPO_AUJ_nanosec"]=duration.count();
+        stats["TEMPS_GET_ACTIONS_DISPO_AUJ_nanosec"]+=duration.count();
         for (Date date = dateDebut; date <= dateFin; date.incrementerDate()){
             if (!bourse.getActionsDisponiblesParDate(date).empty()){
                 cout<<"les transactions effectuees pendant la date : "<<date<<" solde : "<<portfeuil.getSolde()<<endl;
@@ -78,7 +78,7 @@ public:
         stats["VALEUR_TITRES"] = valueTitres+portfeuil.getSolde();
         auto stopSimulation = chrono::high_resolution_clock::now();
         auto durationSimulation = chrono::duration_cast<chrono::microseconds>(stopSimulation - startSimulation);
-        stats["TEMPS_SIMULATION_microsec"]+=durationSimulation.count();
+        stats["TEMPS_SIMULATION_microsec"]=durationSimulation.count();
         return stats;
     };
     Date getDateDebut () const {return dateDebutSimulation;};

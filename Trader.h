@@ -9,7 +9,8 @@
 using namespace std;
 class Trader {
     public :
-        virtual Transaction choisirTransaction(const Bourse& bourse, const Portefeuille &portefeuille)=0;
+        virtual ~Trader(){};
+        virtual Transaction choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille)=0;
 
 };
 
@@ -17,7 +18,7 @@ class Trader {
 
 class TraderAleatoire : public Trader {
     public :
-        Transaction choisirTransaction(const Bourse& bourse, const Portefeuille &portefeuille);
+        Transaction choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille);
 
 } ;
 

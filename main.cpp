@@ -72,7 +72,7 @@ int main(){
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
     vector<PrixJournalier> historique = PersistancePrixJournaliers::lirePrixJournaliersDUnFichier("prices_simple.csv");
-    Bourse *bourse = new BourseMap(d1,historique);
+    Bourse *bourse = new BourseSet(d1,historique);
 
     Date date(8, 1, 2010);
     date = Date(4, 1, 2010);
@@ -173,13 +173,13 @@ int main(){
 
     /* ---------------------------------------------------------------------------------------------------------------------------------------*/
 
-    Trader* trader = new TraderMoyenne();
+    Trader* trader = new TraderHumain();
 
    // cout<<(trader->choisirTransaction(*bourse,pf1));
 
 
     Date d7(4,1,2010);
-    Date d8(3,2,2010);
+    Date d8(5,3,2010);
 
     cout<<endl<<"**********************"<<endl<<endl;
     auto stats = Simulation::executer(*bourse,*trader,d7,d8,1000);

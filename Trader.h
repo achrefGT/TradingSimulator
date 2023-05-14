@@ -267,5 +267,42 @@ Transaction TraderPondere::choisirTransaction(const Bourse& bourse, const Portef
     return tx;
 }
 
+//////////////////////////////////// Tradeur Humain //////////////////////////////////////
+
+class TraderHumain : public Trader{
+    public:
+        Transaction choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille);
+
+};
+
+Transaction TraderHumain::choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille){
+    fflush(stdin);
+    cout << "Les actions dans la bourse : " << endl;
+    vector<PrixJournalier> prixJournaliers = bourse.getPrixJournaliersParDate(bourse.getDateAujourdHui(), portefeuille.getSolde());
+    for (const PrixJournalier& prix : prixJournaliers){
+        cout << " " << prix.getNomAction() << "\t| prix : " << prix.getPrix() << endl;
+    }
+
+    if (portefeuille.getTitres().empty()) cout<<endl<<"Votre portefeuille est vide "<<endl;
+
+    else {
+        cout<<endl<<"Vous avez dans votre portefeuille : "<<endl;
+        vector<Titre> titres = portefeuille.getTitres();
+        for (const Titre& titre : titres){
+            cout << titre.getNomAction() << ": " << titre.getQuantite() << endl;
+        }
+    }
+    string transaction;
+    string nomAction;
+    int quantite;
+    cout<<"Votre solde est : "<<portefeuille.getSolde()<<endl;
+    do{cout<<endl<<"Que voulez-vous faire : ( achat ou vente ou rien ) : ";cin>>transaction;}while(!(transaction == "achat" || transaction == "vente" || transaction == "rien"));
+    if (transaction=="rien") return Transaction();
+    cout<<endl<<"Donnez le nom de l'action : ";cin>>nomAction;
+    do{cout<<endl<<"Donnez la quantite : ";}while(scanf("%d",&quantite)&&quantite<0);
+    Titre titre(nomAction,quantite);
+    return (transaction=="achat") ? Transaction(titre,achat): Transaction(titre,vente);
+}
+
 #endif // TRADER_H_INCLUDED
 

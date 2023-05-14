@@ -392,5 +392,9 @@ map<string,vector<double>> BourseMap::getPrixActionParMois (string nomAction="",
     return resultat;
 }
 
+
+
+
+
 #endif // BOURSE_H_INCLUDED
 

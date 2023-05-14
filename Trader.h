@@ -14,6 +14,7 @@ class Trader {
 
 };
 
+
 ///////////////////////////////// Trader Aleatoire /////////////////////////////////////////////
 
 class TraderAleatoire : public Trader {
@@ -96,7 +97,7 @@ Transaction TraderCheapestAndMostValuable::choisirTransaction(const Bourse& bour
             mostValuableTitre = prix.getNomAction();
         }
     }
-        double SeuilProfit = 5.15;
+    double MinProfit = cheapestPrice * 1.1;
     // Sell profitable titles
     for (const Titre& titre : titresDisponibles) {
         if (titre.getQuantite() > 0) {
@@ -104,7 +105,7 @@ Transaction TraderCheapestAndMostValuable::choisirTransaction(const Bourse& bour
 
             for (const PrixJournalier& price : actionsDisponibles) {
                 if (price.getNomAction() == titre.getNomAction()) {
-                    if (price.getPrix() > cheapestPrice) {
+                    if (price.getPrix() > MinProfit) {
                         isProfitable = true;
                         break;
                     }
@@ -112,18 +113,17 @@ Transaction TraderCheapestAndMostValuable::choisirTransaction(const Bourse& bour
             }
 
             if (!isProfitable) {
-                tx = Transaction(Titre(titre.getNomAction(),rand()%100), vente);
+                tx = Transaction(titre, vente);
                 return tx;
             }
         }
     }
 
 
-
         // Sell highly appreciated titles
-        for (const PrixJournalier& price : actionsDisponibles) {
-            for (const Titre& titre : titresDisponibles) {
-                if (titre.getQuantite() > 0 && price.getNomAction() == titre.getNomAction() && price.getPrix() > SeuilProfit+SeuilProfit) {
+        for (const Titre& titre : titresDisponibles) {
+            for (const PrixJournalier& price : actionsDisponibles) {
+                if (titre.getQuantite() > 0 && price.getNomAction() == titre.getNomAction() && price.getPrix() > MinProfit) {
                     tx = Transaction(Titre(price.getNomAction(),1), vente);
                     return tx;
                 }
@@ -131,8 +131,8 @@ Transaction TraderCheapestAndMostValuable::choisirTransaction(const Bourse& bour
         }
     // Buy the cheapest title if affordable
     if (cheapestPrice != numeric_limits<double>::max()) {
-        double maxAffordableQuantity = portefeuille.getSolde() / cheapestPrice;
-        int quantityToBuy = static_cast<int>(floor(maxAffordableQuantity))-25;
+        double maxAffordableQuantity = (portefeuille.getSolde() * 0.3) / cheapestPrice;
+        int quantityToBuy = static_cast<int>(floor(maxAffordableQuantity));
         if (quantityToBuy > 0) {
             tx = Transaction(Titre(cheapestTitre, quantityToBuy), achat);
             return tx;
@@ -208,65 +208,6 @@ Transaction TraderMoyenne::choisirTransaction(const Bourse& bourse, const Portef
     return tx;
 }
 
-///////////////////////////////// Trader Pondere /////////////////////////////////////////////
-
-class TraderPondere : public Trader
-{
-    public:
-        Transaction choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille);
-};
-
-Transaction TraderPondere::choisirTransaction(const Bourse& bourse, const Portefeuille& portefeuille) {
-    Transaction tx;
-    vector<PrixJournalier> actionsDisponibles = bourse.getPrixJournaliersParDate(bourse.getDateAujourdHui(), portefeuille.getSolde());
-    vector<Titre> titresDisponibles = portefeuille.getTitres();
-    if (actionsDisponibles.empty() && portefeuille.getTitres().empty()) {
-        return Transaction(); // Rien Ã  faire si le portefeuille est vide et qu'il n'y a pas d'actions disponibles
-    }
-    typeTransaction type = rien;
-    int quantite = 0;
-    double meilleurRatio = 0;
-
-    // Calculate the moyenneMobile values for all PrixJournalier objects in actionsDisponibles
-    map<string, double> moyenneMobiles;
-    for (const PrixJournalier& prixJournalier : actionsDisponibles) {
-        vector<PrixJournalier> prixJournaliers = bourse.getPrixJournaliersParDate(prixJournalier.getDate(), 5);
-        double sommePrix = 0;
-        for (int j = 0; j < 5; j++) {
-            sommePrix += prixJournaliers[j].getPrix();
-        }
-        double moyenneMobile = sommePrix / 5;
-        moyenneMobiles[prixJournalier.getNomAction()] = moyenneMobile;
-    }
-
-    for (const PrixJournalier& prixJournalier : actionsDisponibles) {
-        double moyenneMobile = moyenneMobiles[prixJournalier.getNomAction()];
-        double ratio = prixJournalier.getPrix() / moyenneMobile;
-        if (ratio > meilleurRatio) {
-            meilleurRatio = ratio;
-            type = achat;
-            quantite = floor(portefeuille.getSolde() / prixJournalier.getPrix()); // acheter autant que possible avec le solde disponible
-            tx = Transaction(Titre(prixJournalier.getNomAction(), quantite), type);
-        }
-    }
-    map<string, PrixJournalier> prixJournaliersMap;
-    for (const PrixJournalier& prixJournalier : bourse.getPrixJournaliersParDate(bourse.getDateAujourdHui(), 5)) {
-        prixJournaliersMap[prixJournalier.getNomAction()] = prixJournalier;
-    }
-    for (const Titre& titre : titresDisponibles) {
-        const PrixJournalier& prixJournalier = prixJournaliersMap[titre.getNomAction()];
-        double moyenneMobile = moyenneMobiles[titre.getNomAction()];
-        double ratio = prixJournalier.getPrix() / moyenneMobile;
-        if (ratio < meilleurRatio) {
-            meilleurRatio = ratio;
-            type = vente;
-            quantite = titre.getQuantite(); // vendre toutes les actions de ce type disponibles dans le portefeuille
-            tx = Transaction(Titre(titre.getNomAction(), quantite), type);
-        }
-    }
-    return tx;
-}
-
 //////////////////////////////////// Tradeur Humain //////////////////////////////////////
 
 class TraderHumain : public Trader{
@@ -289,7 +230,7 @@ Transaction TraderHumain::choisirTransaction(const Bourse& bourse, const Portefe
         cout<<endl<<"Vous avez dans votre portefeuille : "<<endl;
         vector<Titre> titres = portefeuille.getTitres();
         for (const Titre& titre : titres){
-            cout << titre.getNomAction() << ": " << titre.getQuantite() << endl;
+            cout << " " << titre.getNomAction() << "\t| quantite : " << titre.getQuantite() << endl;
         }
     }
     string transaction;

@@ -10,19 +10,20 @@ class Date {
         int annee ;
     public :
         Date(int jj,int mm,int aa);
+        ~Date(){};
         int getJour() const;
         int getMois() const;
         int getAnnee() const;
-        void incrementerDate();
+        Date incrementerDate();
         friend ostream& operator<< (ostream& flux , Date d);
         friend istream& operator>> (istream& flux, Date& d);
-        bool VerifDate31(int j,int m) const;
-        bool VerifDate30(int j,int m) const;
-        bool Isleap(int a) const;
+        bool verifDate31() const;
+        bool verifDate30() const;
+        bool isLeap() const;
         bool operator==(const Date& d) const;
         bool operator<(const Date& d) const;
         bool operator>(const Date& d) const ;
-         bool operator<=(const Date& d) const;
+        bool operator<=(const Date& d) const;
         bool VerifDate() const;
 };
 istream& operator>> (istream& flux,Date& d){
@@ -34,7 +35,7 @@ istream& operator>> (istream& flux,Date& d){
         d.jour=stoi(sJour);
         d.mois=stoi(sMois);
         d.annee=stoi(sAnnee);
-    }while(!(d.VerifDate()));
+    }while(!(d.VerifDate() || flux.eof()));
     return flux;
 }
 
@@ -62,47 +63,53 @@ int Date::getAnnee() const {
 
 
 
-void Date::incrementerDate(){
-    if ((mois==2 && ((Isleap(annee) && jour ==29) || (!Isleap(annee) && jour==28))) || (VerifDate30(jour,mois) && jour==30) || (VerifDate31(jour,mois) && jour==31)){
+Date Date::incrementerDate(){
+    if (!this->VerifDate()) return *this;
+    if ((mois==2 && ((this->isLeap() && jour ==29) || (!this->isLeap() && jour==28))) || ((this->verifDate30()) && jour==30) || ((this->verifDate31()) && jour==31)){
             jour=1;
             if (mois==12) {annee++;mois=1;}
             else mois++;
     }
     else jour++;
-
+    return *this;
 
 }
 
-bool Date::Isleap(int a) const{
-    if (a%4==0 || (a%100==0 && a%400==0)) {
+bool Date::isLeap() const{
+    if (!this->VerifDate()) return false;
+    if (annee%4==0 || (annee%100==0 && annee%400==0)) {
         return true;
     }
     return false;
 }
 
-bool Date::VerifDate31(int j, int m) const{
-    if ((m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) && j >= 1 && j <= 31) {
+bool Date::verifDate31() const{
+    if (!this->VerifDate()) return false;
+    if ((mois == 1 || mois == 3 || mois == 5 || mois == 7 || mois == 8 || mois == 10 || mois == 12) && jour >= 1 && jour <= 31) {
         return true;
     }
     return false;
 }
 
-bool Date::VerifDate30(int j, int m) const{
-    if ((m == 4 || m == 6 || m == 9 || m == 11) && j >= 1 && j <= 30) {
+bool Date::verifDate30() const{
+    if (!this->VerifDate()) return false;
+    if ((mois == 4 || mois == 6 || mois == 9 || mois == 11) && jour >= 1 && jour <= 30) {
         return true;
     }
     return false;
 }
 bool Date::VerifDate() const{
-            if(jour>0 && jour<=31 && mois>0 && mois <13 && annee>0 )
-                {return true;}
-            return false;
-        }
+    if(jour>0 && jour<=31 && mois>0 && mois <13 && annee>=0 )
+        {return true;}
+    return false;
+}
 bool Date::operator==(const Date& d) const {
+    if (!(this->VerifDate() || d.VerifDate())) return false;
     return (jour == d.jour && mois == d.mois && annee == d.annee);
 }
 
 bool Date::operator<(const Date& d) const {
+    if (!(this->VerifDate() || d.VerifDate())) return false;
     if (annee < d.annee) {
         return true;
     }
@@ -128,6 +135,7 @@ bool Date::operator<(const Date& d) const {
 }
 
 bool Date::operator>(const Date& d) const {
+    if (!(this->VerifDate() || d.VerifDate())) return false;
     if (annee > d.annee) {
         return true;
     }
@@ -152,28 +160,8 @@ bool Date::operator>(const Date& d) const {
     }
 }
 bool Date::operator<=(const Date& d) const {
-    if (annee <= d.annee) {
-        return true;
-    }
-    else if (annee > d.annee) {
-        return false;
-    }
-    else {
-        if (mois <= d.mois) {
-            return true;
-        }
-        else if (mois > d.mois) {
-            return false;
-        }
-        else {
-            if (jour <= d.jour) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-    }
+    if (!(this->VerifDate() || d.VerifDate())) return false;
+    return (*this < d) || (*this == d);
 }
 
 

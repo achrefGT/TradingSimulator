@@ -49,14 +49,22 @@ public:
             stats["TEMPS_GET_ACTIONS_DISPO_AUJ_microsec"] += duration.count();
             ++stats["NBRE_GET_ACTIONS_DISPO_AUJ"];
             if (!actionsAujourdhui.empty()){
+<<<<<<< HEAD
+                cout<<"les transactions effectuees pendant la date : "<<date<<" solde : "<<portfeuil.getSolde()<<endl;
+=======
                // cout<<"les transactions effectuees pendant la date : "<<date<<" solde : "<<portfeuil.getSolde()<<endl;
+>>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
                // for (int i=0;i<1+rand()%100;i++){
                 for (int i=0;i<100;i++){
                     auto startTX = chrono::high_resolution_clock::now();
                     Transaction transaction=trader.choisirTransaction(bourse,portfeuil);
                     auto stopTX = chrono::high_resolution_clock::now();
                     auto durationTX = chrono::duration_cast<chrono::microseconds>(stopTX - startTX);
+<<<<<<< HEAD
+                    if (transaction.getType() == rien || transaction.getTitre().getQuantite()== 0 ) cout<<" -- rien"<<endl;
+=======
                     if (transaction.getType() == rien || transaction.getTitre().getQuantite()== 0 ) ;// cout<<" -- rien"<<endl;
+>>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
                     else{
                         auto startPrix = chrono::high_resolution_clock::now();
                         prix = bourse.prixAction(bourse.getHistorique(),transaction.getTitre().getNomAction());
@@ -70,7 +78,11 @@ public:
                                         if ((portfeuil.retirerMontant(transaction.getTitre().getQuantite()*prix))){
                                             ++stats["NB_ACHATS"];
                                             stats["TEMPS_TX_microsec"]+=durationTX.count();
+<<<<<<< HEAD
+                                            cout<<" -> "<<transaction<<" "<<prix<<endl;
+=======
                                           //  cout<<" -> "<<transaction<<" "<<prix<<endl;
+>>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
                                         }
                                     }
                                     else cout << "ACHAT IMPOSSIBLE" << endl;
@@ -81,7 +93,11 @@ public:
                                       if (portfeuil.deposerMontant(prix*transaction.getTitre().getQuantite()) ) {
                                         ++stats["NB_VENTES"];
                                         stats["TEMPS_TX_microsec"]+=durationTX.count();
+<<<<<<< HEAD
+                                        cout<<" <- "<<transaction<<" "<<prix<<endl;
+=======
                                       //  cout<<" <- "<<transaction<<" "<<prix<<endl;
+>>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
                                       }
                                 }
                                 else cout << "VENTE IMPOSSIBLE" << endl;

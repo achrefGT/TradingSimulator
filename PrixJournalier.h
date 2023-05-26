@@ -46,4 +46,8 @@ bool PrixJournalier::operator<(const PrixJournalier& other) const{
 
 
 
+<<<<<<< HEAD
 #endif // PRIXJOURNALIER_H_INCLUDED
+=======
+#endif // PRIXJOURNALIER_H_INCLUDED
+>>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07

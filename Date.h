@@ -26,8 +26,36 @@ class Date {
         bool operator<=(const Date& d) const;
         bool VerifDate() const;
 };
+
+bool isStringOfNumbers(const string& str) {
+    for (char c : str) {
+        if (!isdigit(c)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 istream& operator>> (istream& flux,Date& d){
     string sJour,sMois,sAnnee;
+<<<<<<< HEAD
+
+    while (getline(flux, sJour, '/') && getline(flux, sMois, '/') && getline(flux, sAnnee)) {
+        if (isStringOfNumbers(sJour) && isStringOfNumbers(sMois) && isStringOfNumbers(sAnnee)) {
+
+            d.jour = stoi(sJour);
+            d.mois = stoi(sMois);
+            d.annee = stoi(sAnnee);
+
+            if (d.VerifDate() || flux.eof()) {
+                break;
+            }
+        }
+    }
+
+return flux;
+
+=======
     do {
         getline(flux,sJour,'/');
         getline(flux,sMois,'/');
@@ -37,6 +65,7 @@ istream& operator>> (istream& flux,Date& d){
         d.annee=stoi(sAnnee);
     }while(!(d.VerifDate() || flux.eof()));
     return flux;
+>>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
 }
 
 ostream& operator<< (ostream& flux , Date d ){

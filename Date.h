@@ -38,7 +38,6 @@ bool isStringOfNumbers(const string& str) {
 
 istream& operator>> (istream& flux,Date& d){
     string sJour,sMois,sAnnee;
-<<<<<<< HEAD
 
     while (getline(flux, sJour, '/') && getline(flux, sMois, '/') && getline(flux, sAnnee)) {
         if (isStringOfNumbers(sJour) && isStringOfNumbers(sMois) && isStringOfNumbers(sAnnee)) {
@@ -55,17 +54,6 @@ istream& operator>> (istream& flux,Date& d){
 
 return flux;
 
-=======
-    do {
-        getline(flux,sJour,'/');
-        getline(flux,sMois,'/');
-        getline(flux,sAnnee);
-        d.jour=stoi(sJour);
-        d.mois=stoi(sMois);
-        d.annee=stoi(sAnnee);
-    }while(!(d.VerifDate() || flux.eof()));
-    return flux;
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
 }
 
 ostream& operator<< (ostream& flux , Date d ){

@@ -24,8 +24,4 @@ ostream& operator<< (ostream& flux ,Transaction tx){
     return flux;
 }
 
-<<<<<<< HEAD
 #endif // TRANSACTION_H_INCLUDED
-=======
-#endif // TRANSACTION_H_INCLUDED
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07

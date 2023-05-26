@@ -24,10 +24,6 @@
 
 
 using namespace std;
-<<<<<<< HEAD
-=======
-
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
 /*
 
 int main(){
@@ -178,21 +174,13 @@ int main(){
 
     // ---------------------------------------------------------------------------------------------------------------------------------------
 
-<<<<<<< HEAD
     Trader* trader = new TraderAleatoire();
-=======
-    Trader* trader = new TraderCheapestAndMostValuable();
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
 
    // cout<<(trader->choisirTransaction(*bourse,pf1));
 
 
     Date d7(2,1,2010);
-<<<<<<< HEAD
     Date d8(5,1,2010);
-=======
-    Date d8(5,2,2010);
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
 
     cout<<endl<<"**********************"<<endl<<endl;
     auto stats = Simulation::executer(*bourse,*trader,d7,d8,1000);
@@ -200,14 +188,9 @@ int main(){
 
 
     return 0;
-<<<<<<< HEAD
 }*/
 
 
-=======
-}
-*/
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
 int saisieEntier ()
 {
      bool error;
@@ -224,214 +207,10 @@ int saisieEntier ()
         do{scanf("%c",&skip_ch);}while(skip_ch != '\n');
 	}while (error);
 	return input;
-<<<<<<< HEAD
 }
 
 int main (){
-    int numSimulation = 0;
-    map<tuple<int,string,string>,map<string, long>> historiqueSimulations;
-    stack<pair<Bourse*,string>>Bourses;
-    stack<pair<Trader*,string>>Traders;
-    while(1){
-        cout << ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" << endl;
-        cout << "::  >-------------------------< MENU >------------------------<  ::" << endl;
-        cout << ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" << endl;
-        cout << "::                                                               ::" << endl;
-        cout << "::    1 >------------< Choisissez une bourse >-----------< 1     ::" << endl;
-        cout << "::                                                               ::" << endl;
-        cout << "::    2 >--------< Choisissez le type du trader >--------< 2     ::" << endl;
-        cout << "::                                                               ::" << endl;
-        cout << "::    3 >-----------< Executer la simulation >-----------< 3     ::" << endl;
-        cout << "::                                                               ::" << endl;
-        cout << "::    4 >-----------< Historique simulations >-----------< 4     ::" << endl;
-        cout << "::                                                               ::" << endl;
-        cout << "::    5 >-------------------< Quitter >------------------< 5     ::" << endl;
-        cout << "::                                                               ::" << endl;
-        cout << ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" << endl;
-        cout << ">>>> Donnez votre choix : ";
-        int choix;
-        choix=saisieEntier();
-		switch(choix)
-		{
-			case 1:{
-			    system("cls");
-                cout << ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" << endl;
-                cout << "::  >---------------------< CHOIX BOURSE >--------------------<  ::" << endl;
-                cout << ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" << endl;
-                cout << "::                                                               ::" << endl;
-                cout << "::    1 >----------------< BourseVector >----------------< 1     ::" << endl;
-                cout << "::                                                               ::" << endl;
-                cout << "::    2 >------------------< BourseSet >-----------------< 2     ::" << endl;
-                cout << "::                                                               ::" << endl;
-                cout << "::    3 >---------------< BourseMultimap >---------------< 3     ::" << endl;
-                cout << "::                                                               ::" << endl;
-                cout << "::    4 >------------------< BourseMap >-----------------< 4     ::" << endl;
-                cout << "::                                                               ::" << endl;
-                cout << "::    5 >--------------------< Retour >------------------< 5     ::" << endl;
-                cout << "::                                                               ::" << endl;
-                cout << ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" << endl;
-                cout << ">>>> Donnez votre choix : ";
-                int choix;
-                choix=saisieEntier();
-                switch(choix){
-                    case 1:{
-                        vector<PrixJournalier> historique = PersistancePrixJournaliers::lirePrixJournaliersDUnFichier("prices_simple.csv");
-                        Bourse* bourse = new BourseVector(Date (4, 9, 2023),historique);
-                        Bourses.push(make_pair(bourse,"BourseVector"));
-                        cout<<"Operation effectuee avec succes"<<endl;system("pause");
-                        break;
-                    }
-                    case 2:{
-                        vector<PrixJournalier> historique = PersistancePrixJournaliers::lirePrixJournaliersDUnFichier("prices_simple.csv");
-                        Bourse* bourse = new BourseSet(Date (4, 9, 2023),historique);
-                        Bourses.push(make_pair(bourse,"BourseSet"));
-                        cout<<"Operation effectuee avec succes"<<endl;system("pause");
-                        break;
-                    }
-                    case 3:{
-                        vector<PrixJournalier> historique = PersistancePrixJournaliers::lirePrixJournaliersDUnFichier("prices_simple.csv");
-                        Bourse* bourse = new BourseMultimap(Date (4, 9, 2023),historique);
-                        Bourses.push(make_pair(bourse,"BourseMultimap"));
-                        cout<<"Operation effectuee avec succes"<<endl;system("pause");
-                        break;
-                    }
-                    case 4:{
-                        vector<PrixJournalier> historique = PersistancePrixJournaliers::lirePrixJournaliersDUnFichier("prices_simple.csv");
-                        Bourse* bourse = new BourseMap(Date (4, 9, 2023),historique);
-                        Bourses.push(make_pair(bourse,"BourseMap"));
-                        cout<<"Operation effectuee avec succes"<<endl;system("pause");
-                        break;
-                    }
-
-                    case 5:{
-                        break;
-                    }
-                    default:
-                        cout<<"\nEntree invalide"<<endl;
-                        system("pause");
-                        break;
-                }
-                break;
-            }
-			case 2:{
-			    system("cls");
-                cout << ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" << endl;
-                cout << "::  >---------------------< CHOIX TRADER >--------------------<  ::" << endl;
-                cout << ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" << endl;
-                cout << "::                                                               ::" << endl;
-                cout << "::    1 >--------------< TraderAleatoire >---------------< 1     ::" << endl;
-                cout << "::                                                               ::" << endl;
-                cout << "::    2 >---------------< TraderMoyenne >----------------< 2     ::" << endl;
-                cout << "::                                                               ::" << endl;
-                cout << "::    3 >---------< TraderCheapestAndMostValuable >------< 3     ::" << endl;
-                cout << "::                                                               ::" << endl;
-                cout << "::    4 >-----------------< TraderHumain >---------------< 4     ::" << endl;
-                cout << "::                                                               ::" << endl;
-                cout << "::    5 >--------------------< Retour >------------------< 5     ::" << endl;
-                cout << "::                                                               ::" << endl;
-                cout << ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" << endl;
-                cout << ">>>> Donnez votre choix : ";
-                int choix;
-                choix=saisieEntier();
-                switch(choix){
-                    case 1:{
-                        Trader* trader = new TraderAleatoire();
-                        Traders.push(make_pair(trader,"TraderAleatoire"));
-                        cout<<"Operation effectuee avec succes"<<endl;system("pause");
-                        break;
-                    }
-                    case 2:{
-                        Trader* trader = new TraderMoyenne();
-                        Traders.push(make_pair(trader,"TraderMoyenne"));
-                        cout<<"Operation effectuee avec succes"<<endl;system("pause");
-                        break;
-                    }
-                    case 3:{
-                        Trader* trader = new TraderCheapestAndMostValuable();
-                        Traders.push(make_pair(trader,"TraderCheapestAndMostValuable"));
-                        cout<<"Operation effectuee avec succes"<<endl;system("pause");
-                        break;
-                    }
-                    case 4:{
-                        Trader* trader = new TraderHumain();
-                        Traders.push(make_pair(trader,"TraderHumain"));
-                        cout<<"Operation effectuee avec succes"<<endl;system("pause");
-                        break;
-                    }
-                    case 5:{
-                        break;
-                    }
-                    default:
-                        cout<<"\nEntree invalide"<<endl;
-                        system("pause");
-                        break;
-                }
-                break;
-            }
-			case 3:{
-                if(Bourses.empty()){
-                    if (Traders.empty()) cout<<"Choisissez une bourse et un trader"<<endl;
-                    else cout<<"Choisissez un bourse"<<endl;
-                    system("pause");
-                    break;
-                }
-                else {
-                    if (Traders.empty()) {
-                        cout<<"Choisissez un trader"<<endl;
-                        system("pause");
-                        break;
-                    }
-                }
-			    Date dateDebut(0,0,0);
-			    Date dateFin(0,0,0);
-			    double Budget;
-                cout<<"Donnez la date du debut : (sous forme jj/mm/aaaa) >>> ";cin>>dateDebut;
-                cout<<"Donnez la date du fin : (sous forme jj/mm/aaaa) >>> ";cin>>dateFin;
-                do{cout<<"Donnez le budget >>> ";cin>>Budget;}while(Budget<=0);
-                auto stats = Simulation::executer(*Bourses.top().first,*Traders.top().first,dateDebut,dateFin,Budget);
-                historiqueSimulations[make_tuple(++numSimulation,Bourses.top().second,Traders.top().second)]=stats;
-                delete Bourses.top().first;
-                delete Traders.top().first;
-                Traders.pop();
-                Bourses.pop();
-                system("pause");
-                break;
-            }
-			case 4:{
-			    system("cls");
-                if(numSimulation==0) cout<<"Aucune simulation a ete executee"<<endl;
-                else{
-                    for (auto simulation : historiqueSimulations){
-                        cout<<"Simulation numero :"<<(get<0>(simulation.first))<< endl <<"******************"<< endl << "bourse : " <<(get<1>(simulation.first))<< "\t|\ttrader : " <<(get<2>(simulation.first))<<endl<<"******************"<<endl;
-                        for(auto it:simulation.second){cout<<it.first<<"\t"<<it.second<<endl; }
-                        cout<<"_______________________________________________"<<endl<<endl;
-                    }
-                }
-                system("pause");
-                break;
-            }
-			case 5:{
-                exit(0);
-                break;
-            }
-            default:
-                cout<<"\nEntree invalide"<<endl;
-                system("pause");
-                break;
-		}
-		system("cls");
-
-	}
-	return 0;
-
-
-
-
-=======
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
-}
-
-int main (){
+    srand(1);
     int numSimulation = 0;
     map<tuple<int,string,string>,map<string, long>> historiqueSimulations;
     stack<pair<Bourse*,string>>Bourses;
@@ -632,3 +411,4 @@ int main (){
 
 
 }
+

@@ -13,13 +13,6 @@ class Bourse {
         Date dateAujourdHui;
         vector<PrixJournalier> historique;
     public:
-<<<<<<< HEAD
-<<<<<<< HEAD
-        Bourse(Date dFR) : dateFinRecherche(dFR) {};
-        Date getDateFinRecherche() const ;
-        virtual vector<string> getActionsDisponiblesParDate(Date,double prixMax = 0.0) const = 0;
-        virtual vector<PrixJournalier> getPrixJournaliersParDate(Date,double prixMax = 0.0) const = 0;
-=======
         Bourse(Date dateAujourdHui,vector<PrixJournalier> historique) : dateAujourdHui(dateAujourdHui),historique(historique) {};
         virtual ~Bourse(){};
         Date getDateAujourdHui() const {return dateAujourdHui;};
@@ -30,19 +23,6 @@ class Bourse {
         virtual vector<PrixJournalier> getHistorique() const = 0;
         virtual map<string,vector<double>> getPrixActionParMois (string nomAction="",int mois=0) const = 0;
 
->>>>>>> test1
-=======
-        Bourse(Date dateAujourdHui,vector<PrixJournalier> historique) : dateAujourdHui(dateAujourdHui),historique(historique) {};
-        virtual ~Bourse(){};
-        Date getDateAujourdHui() const {return dateAujourdHui;};
-        double prixAction(const vector<PrixJournalier>&,const string&) const;
-        virtual void setDateAujourdHui(Date date) = 0;
-        virtual vector<string> getActionsDisponiblesParDate(Date,double prixMax = 0.0) const = 0;
-        virtual vector<PrixJournalier> getPrixJournaliersParDate(Date,double prixMax = 0.0) const = 0;
-        virtual vector<PrixJournalier> getHistorique() const = 0;
-        virtual map<string,vector<double>> getPrixActionParMois (string nomAction="",int mois=0) const = 0;
-
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
 };
 
 
@@ -64,29 +44,13 @@ class BourseVector : public Bourse {
     private:
         vector<PrixJournalier> historiqueVector;
     public:
-<<<<<<< HEAD
-<<<<<<< HEAD
-        BourseVector(Date dFR,vector<PrixJournalier> vect) : Bourse(dFR),historique(vect) {};
-        vector<string> getActionsDisponiblesParDate(Date,double) const;
-        vector<PrixJournalier> getPrixJournaliersParDate(Date,double) const;
-        vector<PrixJournalier> getHistorique() const;
-=======
         BourseVector(Date date,vector<PrixJournalier> historique);
         vector<string> getActionsDisponiblesParDate(Date,double) const;
         vector<PrixJournalier> getPrixJournaliersParDate(Date,double) const;
-=======
-        BourseVector(Date date,vector<PrixJournalier> historique);
-        vector<string> getActionsDisponiblesParDate(Date,double) const;
-        vector<PrixJournalier> getPrixJournaliersParDate(Date,double) const;
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
         vector<PrixJournalier> getHistorique() const { return historiqueVector;};
         map<string,vector<double>> getPrixActionParMois (string,int) const;
         void setDateAujourdHui(Date date);
 
-<<<<<<< HEAD
->>>>>>> test1
-=======
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
 };
 
 
@@ -110,35 +74,8 @@ void BourseVector::setDateAujourdHui(Date date) {
         }
     }
 }
-<<<<<<< HEAD
-=======
 
 
-
-map<string,vector<double>> BourseVector::getPrixActionParMois (string nomAction="",int mois=0) const{
-    map<string,vector<double>> resultat;
-    mois = (!mois || mois>=13 || mois<=0) ? (dateAujourdHui.getMois()!=1 ? dateAujourdHui.getMois()-1 : 12 ) : mois;
-    for (const PrixJournalier& pj : historiqueVector){
-        if(pj.getDate().getMois()==mois && ((dateAujourdHui.getAnnee()==pj.getDate().getAnnee() && mois!=12) || (dateAujourdHui.getAnnee()-1==pj.getDate().getAnnee() && mois==12))){
-            if(nomAction == "" || nomAction==pj.getNomAction()){
-                resultat[pj.getNomAction()].push_back(pj.getPrix());
-            }
-        }
-    }
-    return resultat;
-}
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
-
-
-<<<<<<< HEAD
-vector<string> BourseVector::getActionsDisponiblesParDate(Date date,double prixMax=0.0) const{
-    vector<string> actionsDisponibles;
-    for (const PrixJournalier& pj : historique) {
-<<<<<<< HEAD
-        if (pj.getDate() <= date) {
-            if ((prixMax && pj.getPrix()>=prixMax) || !prixMax){
-                actionsDisponibles.push_back(pj.getNomAction());
-=======
 
 map<string,vector<double>> BourseVector::getPrixActionParMois (string nomAction="",int mois=0) const{
     map<string,vector<double>> resultat;
@@ -160,12 +97,6 @@ vector<string> BourseVector::getActionsDisponiblesParDate(Date date,double prixM
         if (pj.getDate() == date) {
             if ((prixMax && pj.getPrix()<=prixMax) || !prixMax){
                 actionsDisponibles.push_back(pj.getNomAction());    // pour une date donnée, si il ya un prix max il ne faut pas le dépasser
->>>>>>> test1
-=======
-        if (pj.getDate() == date) {
-            if ((prixMax && pj.getPrix()<=prixMax) || !prixMax){
-                actionsDisponibles.push_back(pj.getNomAction());    // pour une date donnï¿½e, si il ya un prix max il ne faut pas le dï¿½passer
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
             }
         }
     }
@@ -175,19 +106,9 @@ vector<string> BourseVector::getActionsDisponiblesParDate(Date date,double prixM
 vector<PrixJournalier> BourseVector::getPrixJournaliersParDate(Date date,double prixMax=0.0) const{
     vector<PrixJournalier> prixJournaliers;
     for (const PrixJournalier& pj : historique){
-<<<<<<< HEAD
-<<<<<<< HEAD
-        if (pj.getDate() <= date) {
-            if ((prixMax && pj.getPrix() >=prixMax) || !prixMax){
-=======
         if (pj.getDate() == date) {
             if ((prixMax && pj.getPrix() <=prixMax) || !prixMax){
                 prixJournaliers.push_back(pj);            // pour une date donnée, si il ya un prix max il ne faut pas le dépasser
-=======
-        if (pj.getDate() == date) {
-            if ((prixMax && pj.getPrix() <=prixMax) || !prixMax){
-                prixJournaliers.push_back(pj);            // pour une date donnï¿½e, si il ya un prix max il ne faut pas le dï¿½passer
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
             }
         }
     }
@@ -317,11 +238,7 @@ public:
 
             for (const PrixJournalier& pj : historique) {
                 if (pj.getDate() <= dateAujourdHui) {
-<<<<<<< HEAD
                      historiqueSet.insert(pj);
-=======
-                     historiqueSet.emplace(pj);
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
                 }
             }
         }
@@ -446,10 +363,6 @@ vector<PrixJournalier> BourseMap::getPrixJournaliersParDate(Date date, double pr
         const vector<PrixJournalier>& prixJournalierVector = it->second;
         for (const PrixJournalier& pj : prixJournalierVector) {
             if (prixMax == 0.0 || pj.getPrix() <= prixMax) {
-<<<<<<< HEAD
->>>>>>> test1
-=======
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
                 prixJournaliers.push_back(pj);
             }
         }
@@ -479,12 +392,9 @@ map<string,vector<double>> BourseMap::getPrixActionParMois (string nomAction="",
     return resultat;
 }
 
-<<<<<<< HEAD
 
 
 
 
-=======
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
 #endif // BOURSE_H_INCLUDED
 

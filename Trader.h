@@ -49,11 +49,7 @@ Transaction TraderAleatoire::choisirTransaction(const Bourse& bourse, const Port
             type = vente;
             taille = titresDisponibles.size();
             i = rand() % taille;
-<<<<<<< HEAD
             quantite = 1 + rand() % (titresDisponibles[i].getQuantite()); // la quantite a vendre ne doit pas dépasser ce qu'il y a dans le portefeuille
-=======
-            quantite = 1 + rand() % (titresDisponibles[i].getQuantite()); // la quantite a vendre ne doit pas dï¿½passer ce qu'il y a dans le portefeuille
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
             return Transaction(Titre(titresDisponibles[i].getNomAction(), quantite), type);
         case 2:
             type = achat;
@@ -116,11 +112,7 @@ Transaction TraderCheapestAndMostValuable::choisirTransaction(const Bourse& bour
                 }
             }
 
-<<<<<<< HEAD
             if (!isProfitable) {
-=======
-            if (isProfitable) {
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
                 tx = Transaction(titre, vente);
                 return tx;
             }
@@ -130,15 +122,9 @@ Transaction TraderCheapestAndMostValuable::choisirTransaction(const Bourse& bour
 
         // Sell highly appreciated titles
         for (const Titre& titre : titresDisponibles) {
-<<<<<<< HEAD
             for (const PrixJournalier& price : actionsDisponibles) {
                 if (titre.getQuantite() > 0 && price.getNomAction() == titre.getNomAction() && price.getPrix() > MinProfit) {
                     tx = Transaction(Titre(price.getNomAction(),1), vente);
-=======
-            for (const PrixJournalier& AD : actionsDisponibles) {
-                if (titre.getQuantite() > 0 && AD.getNomAction() == titre.getNomAction() && AD.getPrix() > MinProfit  ) {
-                    tx = Transaction(Titre(AD.getNomAction(),titre.getQuantite()), vente);
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07
                     return tx;
                 }
             }
@@ -260,7 +246,4 @@ Transaction TraderHumain::choisirTransaction(const Bourse& bourse, const Portefe
 }
 
 #endif // TRADER_H_INCLUDED
-<<<<<<< HEAD
 
-=======
->>>>>>> a823091ed39a0e037ea3717463768ef9c91bbd07

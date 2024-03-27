@@ -10,12 +10,12 @@ class Portefeuille {
         vector<Titre> titres;
     public :
         Portefeuille(double solde = 0.0):solde(solde), titres() {};
-		~Portefeuille(){};
-		double getSolde() const;
+	~Portefeuille(){};
+	double getSolde() const;
         vector<Titre> getTitres() const;
-		bool chercherTitre (const string) const;
-		bool ajouterTitre(const Titre& titre);
-		bool retirerTitre(const Titre& titre);
+	bool chercherTitre (const string) const;
+	bool ajouterTitre(const Titre& titre);
+	bool retirerTitre(const Titre& titre);
         bool deposerMontant (double );
         bool retirerMontant (double );
         int getQuantiteTitre (const string) const;
@@ -32,13 +32,13 @@ bool Portefeuille::chercherTitre (const string nomTitre) const{
 bool Portefeuille::ajouterTitre (const Titre& titre){
     if (titre.getQuantite()==0) return false;
     for (vector<Titre>::size_type i = 0; i<titres.size(); i++){
-		if (titres[i] == titre){                                                                                  // si l'action existe dÈj‡
-            titres.push_back(Titre(titre.getNomAction(),titre.getQuantite() + titres[i].getQuantite()));          // on ajoute une avec la nouvelle quantitÈ
-			titres.erase(titres.begin() + i);                                                                     // puis on supprime la premiËre
+		if (titres[i] == titre){                                                                                  // si l'action existe d√©j√†
+            titres.push_back(Titre(titre.getNomAction(),titre.getQuantite() + titres[i].getQuantite()));          // on ajoute une avec la nouvelle quantit√©
+			titres.erase(titres.begin() + i);                                                                     // puis on supprime la premi√®re
 			return true;
 		}
     }
-	titres.push_back(titre);
+    titres.push_back(titre);
     return true;
 }
 
@@ -47,10 +47,10 @@ bool Portefeuille::retirerTitre(const Titre& titre) {
     for (vector<Titre>::size_type i = 0; i < titres.size(); i++) {
         if (titres[i] == titre && titres[i].getQuantite() >= titre.getQuantite()) {
             difference = titres[i].getQuantite() - titre.getQuantite();
-            if (difference > 0) {                                                                                   // si l'action existe dÈj‡ et la quantite ‡ retirer est < ‡ la quantite existant
-                titres.push_back(Titre(titre.getNomAction(), difference));                                          // on diminue la quantitÈ et on ajoute une avec la nouvelle quantitÈ
-            }                                                                                                       // si l'action existe dÈj‡ et la quantite ‡ retirer est = ‡ la quantite existant on n'ajoute rien
-            titres.erase(titres.begin() + i);                                                                       // puis on supprime la premiËre
+            if (difference > 0) {                                                                                   // si l'action existe d√©j√† et la quantite √† retirer est < √† la quantite existant
+                titres.push_back(Titre(titre.getNomAction(), difference));                                          // on diminue la quantit√© et on ajoute une avec la nouvelle quantit√©
+            }                                                                                                       // si l'action existe d√©j√† et la quantite √† retirer est = √† la quantite existant on n'ajoute rien
+            titres.erase(titres.begin() + i);                                                                       // puis on supprime la premi√®re
             return true;
         }
     }
@@ -69,7 +69,7 @@ bool Portefeuille::retirerMontant (double montant){
 		solde -= montant;
 		return true;
 	}
-	return false;
+    return false;
 }
 
 double Portefeuille::getSolde() const{
